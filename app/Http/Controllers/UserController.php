@@ -1,0 +1,127 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use App\User;
+use Session;
+
+class UserController extends Controller
+{
+    public function search(Request $request) {
+
+        $this->validate($request, [
+            'busqueda' => 'required'
+        ]);
+
+        $busqueda = $request->busqueda;
+
+        $users = 
+        User::select('id','nombre', 'apellido', 'usuario', 'correo', 'tipo', 'estado')
+        ->where('usuario', 'like', '%'.$busqueda.'%')
+        ->orwhere('nombre', 'like', '%'.$busqueda.'%')
+        ->orwhere('apellido', 'like', '%'.$busqueda.'%')
+        ->get();
+
+        return view('manage.search.users', ['users' => $users, 'search' => $busqueda]);
+    }
+
+    //USER DATA
+    public function profile(Request $request){
+
+        $user = $request->user();
+        return view('user.profile', ['usuario' => $user]);
+    }
+
+    public function edit(Request $request){
+        
+        $user = $request->user();
+        return view('auth.update', ['usuario' => $user]);
+    }
+
+    public function delete(Request $request){
+
+        $user = $request->user();
+        $usuario = User::where('usuario', $user->usuario)->first();
+        $usuario->delete();
+
+        return redirect('/logout');
+    }
+
+    public function admin($id) {
+
+        $usuario = User::where('id', $id)->first();
+        $usuario->tipo = 1;
+        $usuario->save();
+
+        return redirect("user/manage/0")->with('status', $usuario->usuario.' es ahora un administrador en Fundavica');;       
+    }
+
+    public function writer(Request $request, $id) {
+
+        $usuario = User::where('id', $id)->first();
+        $usuario->tipo = 2;
+        $usuario->save();
+
+        if($usuario->usuario == $request->user()->usuario) {
+            return redirect('logout');
+        }
+
+        return redirect("user/manage/0")->with('status', $usuario->usuario.' es ahora un redactor en Fundavica');       
+    }
+
+    public function normal(Request $request, $id) {
+
+        $usuario = User::where('id', $id)->first();
+        $usuario->tipo = 3;
+        $usuario->save();
+
+        if($usuario->usuario == $request->user()->usuario) {
+            return redirect('logout');
+        }
+
+        return redirect("user/manage/0")->with('status', $usuario->usuario.' es ahora un usuario estandar en Fundavica');;       
+    }
+
+    public function block($id) {
+
+        $usuario = User::where('id', $id)->first();
+        $usuario->estado = 2;
+        $usuario->save();
+
+        return redirect("user/manage/0");       
+    }
+
+    public function unblock($id) {
+
+        $usuario = User::where('id', $id)->first();
+        $usuario->estado = 1;
+        $usuario->save();
+
+        return redirect("user/manage/0");       
+    }
+
+    public function manage($page = 0){
+
+        $users = User::count();
+
+        $pages = ceil($users/15);
+
+        if($page > $pages || $page < 0){
+            return redirect('user/manage/0');
+        }
+
+        $offset = $page * 15;
+
+        $results = User::select('id','nombre', 'apellido', 'usuario', 'correo', 'tipo', 'estado')
+        ->where('estado', '>=', '1')
+        ->offset($offset)
+        ->limit(15)
+        ->get();
+
+        return view('manage.users', ['users' => $results, 'page' => $page, 'pages' => $pages ]);
+    }
+}

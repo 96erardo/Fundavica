@@ -1,0 +1,35 @@
+.hero.is-primary {
+    background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(https://i.ytimg.com/vi/xVuqR7ariOE/maxresdefault.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+div.post-title {
+    height: 300px;
+    width: 100%;
+    position: relative;
+}
+
+div.post-title div.title-content {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+div.post-title div.title-info {
+    position: relative;
+    left: 10px;
+}
+
+section.background-is-soft {
+    background-color: #F0F5F9;
+}
+
+section.background-is-white {
+    background-color: #fff;
+}
+
+section.background-is-light {
+    background-color: #F5F5F5;
+}
