@@ -92,7 +92,7 @@ class FundavicaController extends Controller
 
     $message = $request->mensaje;
 
-    Mail::to('reyquazar96@hotmail.com')->send(new OpinionMail($message));
+    Mail::to('fundavica.online@gmail.com')->send(new OpinionMail($message));
 
     return redirect()->back()->with('status', 'Mensaje enviado al correo de fundavica, gracias por ayudarnos a mejorar');
   }
