@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import Instafeed from 'instafeed.js';
-import froalaEditor from 'froala-editor/js/froala_editor.pkgd.min.js';
 
 /**
  * Plantilla para colocar fotos de instagram en la galería
@@ -73,9 +72,21 @@ $(function() {
             H4: 'Heading 4',
         }
     };
-    
-    $('#froala').froalaEditor(optg);
 
+    var re = new RegExp('(post/new|post/edit/[0-9]+)');
+    
+    console.log(re.test(window.location.href));
+
+    if(re.test(window.location.href)) {
+        tinymce.init({
+            selector: '#tinymce',      
+            height: 400,
+            plugins: 'advlist autolink link image lists charmap print preview',
+            setup: function (editor) {
+                editor.getElement().removeAttribute('required');
+            }
+        });
+    }
     /**
      * Eliminar las notificaciones que aparezcan en pantalla
      */

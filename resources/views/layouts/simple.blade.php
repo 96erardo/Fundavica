@@ -7,6 +7,7 @@
 	<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/app.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/custom.css') }}">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	@yield('script')
 	<script src="{{ URL::asset('js/app.js') }}"></script>
 </head>
 <body>
@@ -100,7 +101,6 @@
 		</div>		
 	</nav>
 	@yield('content')	
-	@yield('script')
 	@if(Auth::check())
 		<div class="modal" id="profile-modal">
 			<div class="modal-background profile-button"></div>

@@ -20,7 +20,6 @@
     "datatables-bulma": "^1.0.1",
     "datatables.net": "^1.10.16",
     "datatables.net-bulma": "^1.0.1",
-    "froala-editor": "^2.7.3",
     "instafeed.js": "^1.4.1"
   }
 }

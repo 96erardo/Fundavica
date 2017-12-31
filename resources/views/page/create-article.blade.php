@@ -2,6 +2,10 @@
 
 @section('title', 'Nuevo articulo')
 
+@section('script')
+<script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
+@endsection
+
 @section('content')
 <section class="background-is-light">
 	<div class="container">
@@ -66,7 +70,7 @@
 							<div class="columns">
 								<div class="column is-12">
 									<div class="field">
-										<textarea id="froala" name="contenido" class="textarea" required></textarea>
+										<textarea id="tinymce" name="contenido" class="textarea" required></textarea>
 									</div>
 								</div>
 							</div>
@@ -85,10 +89,4 @@
 		</div>
 	</div>
 </section>
-@endsection
-
-@section('script')
-<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/froala_editor.pkgd.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/froala_style.css') }}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css">
 @endsection
