@@ -15,11 +15,11 @@ class PostPolicy
     }
 
     public function update(User $user, Post $post) {
-        return $user->id === $post->usuario_id;
+        return $user->id == $post->usuario_id;
     }
 
     public function delete(User $user, Post $post) {
-        return ($user->id === $post->usuario_id) || ($user->tipo == 1);
+        return ($user->id == $post->usuario_id) || ($user->tipo == 1);
     }
 
     public function hide(User $user) {

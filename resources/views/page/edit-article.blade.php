@@ -80,6 +80,11 @@
 									</div>
 								</div>
 							</div>
+							@if($errors->has('contenido'))
+								<p class="help is-danger">
+									{{ $errors->first('contenido') }}
+								</p>
+							@endif
 							<div class="level">
 								<div class="level-left">
 								</div>

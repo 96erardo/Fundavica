@@ -102,7 +102,7 @@
 														Publicar
 													</a>
 													@endif
-													@if(Auth::user()->tipo == 1 && $post->id > 4)
+													@if($post->id > 4)
 													<a class="dropdown-item del" href="{{ url('post/delete/'.$post->id) }}">
 														Eliminar
 													</a>
