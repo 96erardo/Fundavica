@@ -4,8 +4,8 @@
 	<meta charset="utf-8">
 	<title>Fundavica | 404</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/style-bm.css') }}">
-	
+	<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/app.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/custom.css') }}">
 </head>
 <body>
 	<section class="hero is-danger is-fullheight">
@@ -13,7 +13,7 @@
 			<div class="container has-text-centered">
 				<h1 class="title">
 					<a href="{{ url('/') }}">
-						<img src="{{URL::asset('img/cut logo.png')}}">
+						<img src="{{URL::asset('img/logo.png')}}">
 					</a>
 					<br><br>
 					@yield('title')

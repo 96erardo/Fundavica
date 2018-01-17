@@ -215,7 +215,7 @@
 										<div class="level-item"></div>
 										<div class="level-item"></div>
 										<div class="level-item has-text-centered">
-											<a target="_blank" href="https://www.paypal.me/gerardoagl96">
+											<a target="_blank" href="https://www.paypal.me/fundavica">
 												<img class="image is-128x128 has" src="http://www.underconsideration.com/brandnew/archives/paypal_2014_logo_detail.png">
 												<br>
 											</a>

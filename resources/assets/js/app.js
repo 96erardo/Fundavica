@@ -21,7 +21,7 @@ var instagramTemplate =
                 '<i class="fa fa-paper-plane-o" aria-hidden="true" style="margin-right: 5px;"></i>' +
             '</h3>' +
             '<h6 class="subtitle is-6" style="margin: 5px 0px;">{{comments}} comentarios</h6>' +
-            '<h6 class="subtitle is-6" style="margin: 5px 0px;"><strong>gerardoagl96</strong> {{caption}}</h6>' +
+            '<h6 class="subtitle is-6" style="margin: 5px 0px;"><strong>fundavica</strong> {{caption}}</h6>' +
         '</div>' +
     '</div>' +
 '</div>';
@@ -45,8 +45,8 @@ $(function() {
      */
     var feed = new Instafeed({
         get: 'user',
-        userId: '595939559',
-        accessToken: '595939559.1677ed0.073f4d9880544d5ba4c2e67b4e835ddf',
+        userId: '1417734543',
+        accessToken: '1417734543.1677ed0.41099783a0e149919c063effcb1eec04',
         resolution: 'standard_resolution',
         template: instagramTemplate
     });

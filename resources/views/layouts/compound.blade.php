@@ -25,17 +25,17 @@
 			</div>		
 			<div id="navMenu" class="navbar-menu">
 				<div class="navbar-start">
-					<a class="navbar-item" href="#">
+					<a class="navbar-item" href="https://www.facebook.com/Fundavica-428010880045/" target="_blank">
                         <span class="icon" style="color: #3b5998;">
                             <i class="fa fa-facebook-official" aria-hidden="true"></i>
                         </span>
                     </a>
-                    <a class="navbar-item" href="#">
+                    <a class="navbar-item" href="#" href="" target="_blank">
                         <span class="icon" style="color: #cd486b;">
                             <i class="fa fa-instagram" aria-hidden="true"></i>
                         </span>
                     </a>
-                    <a class="navbar-item" href="#">
+                    <a class="navbar-item" href="#" href="https://twitter.com/search?vertical=default&q=Fundavica&src=typd" target="_blank">
                         <span class="icon" style="color: #1dcaff;">
                             <i class="fa fa-twitter" aria-hidden="true"></i>
                         </span>
