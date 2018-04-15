@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,7 +12,7 @@ class Comment extends Model
     public $timestamps = false;
 
     public function post() {
-    	return $this->belongsTo('App\Post', 'publicacion_id', 'id');
+    	return $this->belongsTo('App\Models\Post', 'publicacion_id', 'id');
     }
 
     public function user() {

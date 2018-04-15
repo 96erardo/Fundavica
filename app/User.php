@@ -14,20 +14,20 @@ class User extends Authenticatable
     protected $table = 'usuario';
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at'];
-    public $timestamps = false;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'nombre', 'apellido', 'usuario', 'correo', 'clave',
-        'tipo', 'estado', 'remember_token', 'deleted_at', 'token'
     ];
 
-    public function posts(){
-        return $this->hasMany('App\Posts', 'usuario_id', 'id');
+    public function posts () {
+        return $this->hasMany('App\Models\Posts', 'usuario_id', 'id');
+    }
+
+    public function role () {
+        return $this->belongsTo('App\Models\Role', 'role_id', 'id');
+    }
+
+    public function status () {
+        return $this->belongsTo('App\Models\UserStatus', 'estado_id', 'id');
     }
 
     /**

@@ -1,13 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Account extends Model
+class Donations extends Model
 {
     //
-    protected $table = "cuenta";
+    protected $table = "donacion";
     protected $primaryKey = "id";
     public $timestamps = false;
+
 }
