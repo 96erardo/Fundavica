@@ -3,18 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Post;
-use App\Account;
-use App\People;
-use App\Album;
-use App\Donations;
+use App\Models\Post;
+use App\Models\Account;
+use App\Models\People;
+use App\Models\Album;
+use App\Models\Donations;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OpinionMail;
 
 class FundavicaController extends Controller
 {
-        //
   public function home() {
     return redirect('/posts/0');
   }
@@ -32,19 +31,24 @@ class FundavicaController extends Controller
 
     $offset = $page * 16;
 
-    $results = Post::select('id','titulo', 'imagen', 'fecha', 'categoria_id', 'usuario_id', 'estado')
-    ->where('estado', 1)
+    $results = Post::where('estado_id', 2)
     ->offset($offset)
     ->limit(16)
-    ->orderBy('id', 'desc')
+    ->orderBy('created_at', 'desc')
     ->with([
       'category' => function($query) {
         $query->select('id', 'nombre', 'color');
     }, 
       'user' => function($query) {
-        $query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-    }
+        $query->withTrashed()->select('id', 'nombre', 'apellido', 'correo', 'usuario');
+    },
+      'status'
     ])->get();
+
+    foreach($results as $post) {
+      $date = strtotime($post->created_at);
+      $post->fecha = date('d-m-Y', $date);
+    }
 
     return view('index.posts', ['posts' => $results, 'page' => $page, 'pages' => $pages ]);
   }
@@ -101,10 +105,14 @@ class FundavicaController extends Controller
 
    $accounts = Account::where('estado', 1)->get();
    
-   $donations = 
-    Donations::select('nombre', 'apellido', 'cedula', 'fecha')
+   $donations = Donations::select('nombre', 'apellido', 'cedula', 'fecha')
       ->where('estado', '1')
       ->get();
+
+    foreach($donations as $donation) {
+      $date = strtotime($donation->fecha);
+      $donation->fecha = date('d-m-Y', $date);
+    }
 
    return view('index.donations', ['accounts' => $accounts, 'donations' => $donations]);
  }

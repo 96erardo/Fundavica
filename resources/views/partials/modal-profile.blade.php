@@ -3,22 +3,22 @@
 		<div class="modal-background profile-button"></div>
 		<div class="model-content">
 			<div class="modal-card">
-				@if(Auth::user()->tipo == 1)
+				@if(Auth::user()->role_id == 4)
 					<div class="hero is-success">
-				@elseif(Auth::user()->tipo == 2)
+				@elseif(Auth::user()->role_id == 3)
 					<div class="hero is-warning">
-				@elseif(Auth::user()->tipo == 3)
+				@elseif(Auth::user()->role_id == 2 || Auth::user()->role_id == 1)
 					<div class="hero is-info">
 				@endif
 					<div class="hero-body">
 						<div class="container">
 							<h3 class="title is-3">{{Auth::user()->nombre}} {{Auth::user()->apellido}}</h3>
 							<p class="subtitle">
-								@if(Auth::user()->tipo == 1)
+								@if(Auth::user()->role_id == 4)
 									Administrador <i class="fa fa-line-chart" aria-hidden="true"></i>
-								@elseif(Auth::user()->tipo == 2)
+								@elseif(Auth::user()->role_id == 4)
 									Redactor <i class="fa fa-newspaper-o" aria-hidden="true"></i>
-								@elseif(Auth::user()->tipo == 3)
+								@elseif(Auth::user()->role_id == 2)
 									Estandar <i class="fa fa-user-circle-o" aria-hidden="true"></i>
 								@endif
 							</p>

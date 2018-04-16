@@ -4,17 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Post;
-use App\Category;
-use App\User;
-use App\Comment;
-use App\Tag;
+use App\Models\Post;
+use App\Models\Category;
+use App\Models\User;
+use App\Models\Comment;
 
 class PostController extends Controller
 {
 	public function post($id){
 
-		$resultado = Post::where('id', $id)
+		$result = Post::where('id', $id)
 		->with([
 			'category' => function($query) {
 				$query->select('id', 'nombre', 'color');
@@ -29,36 +28,31 @@ class PostController extends Controller
 					} 
 					]);
 			}
-			])->first();
+		])->first();
 
-		$others = DB::select("SELECT id, titulo, imagen FROM mydb.publicacion ORDER BY RAND() LIMIT 5");		
+		$date = strtotime($result->created_at);
+		$result->fecha = date('d-m-Y', $date);
 		
-		return view('page.article', ['pub' => $resultado , 'others' => $others]);
+		return view('page.article', ['pub' => $result]);
 	}
 
 	public function manage($page = 0){
-
-		$posts = Post::count();
-
-		$pages = ceil($posts/16);
-
-		if($page > $pages || $page < 0){
-			return redirect('post/manage/0');
+		
+		$posts = Post::select('id','titulo', 'created_at', 'usuario_id', 'estado_id')
+			->orderBy('created_at', 'desc')
+			->with([
+				'user' => function($query) {
+					$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+				},
+				'status'
+			])->get();
+		
+		foreach($posts as $post) {
+			$date = strtotime($post->created_at);
+			$post->fecha = date('d-m-Y', $date);
 		}
 
-		$offset = $page * 15;
-
-		$results = Post::select('id','titulo', 'fecha', 'usuario_id', 'estado')
-		->offset($offset)
-		->limit(15)
-		->orderBy('id', 'desc')
-		->with([
-			'user' => function($query) {
-				$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-			}
-			])->get();
-
-		return view('manage.posts', ['posts' => $results, 'page' => $page, 'pages' => $pages ]);
+		return view('manage.posts', ['posts' => $posts]);
 	}
 
 	public function add(){
@@ -84,7 +78,7 @@ class PostController extends Controller
 		$publicacion->fecha = date("Y-m-d");
 		$publicacion->usuario_id = $usuario->id;
 		$publicacion->categoria_id = $request->categoria;
-		$publicacion->estado = 1;
+		$publicacion->estado_id = 1;
 		$publicacion->save();
 
 		return redirect('/');
@@ -122,7 +116,7 @@ class PostController extends Controller
 		$publicacion->estado = 0;
 		$publicacion->save();
 
-		return redirect('post/manage/0')->with('status', 'Publicación "'. $publicacion->titulo .'" ocultada.');
+		return redirect('post/manage')->with('status', 'Publicación "'. $publicacion->titulo .'" ocultada.');
 	}
 
 	public function show($id) {
@@ -131,30 +125,7 @@ class PostController extends Controller
 		$publicacion->estado = 1;
 		$publicacion->save();
 
-		return redirect('post/manage/0')->with('status', 'Publicación "'. $publicacion->titulo .'" visible.');
-	}
-
-	public function search(Request $request) {
-
-		$this->validate($request, [
-				'busqueda' => 'required'
-			]);
-
-		$busqueda = $request->busqueda;
-
-		$posts = 
-		Post::select('id','titulo', 'imagen', 'fecha', 'categoria_id', 'usuario_id', 'estado')
-			->where('titulo', 'like', '%'.$busqueda.'%')
-			->with([
-				'category' => function($query) {
-					$query->select('id', 'nombre', 'color');
-				}, 
-				'user' => function($query) {
-					$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-				}
-				])->get();
-
-		return view('manage.search.posts', ['posts' => $posts, 'search' => $busqueda]);
+		return redirect('post/manage')->with('status', 'Publicación "'. $publicacion->titulo .'" visible.');
 	}
 
 	public function delete(Post $post) {
@@ -162,7 +133,7 @@ class PostController extends Controller
 		$publicacion = $post->titulo;
 		$post->delete();
 
-		return redirect('post/manage/0')->with('status', 'Publicación "'. $publicacion .'" eliminada.');
+		return redirect('post/manage')->with('status', 'Publicación "'. $publicacion .'" eliminada.');
 	}
 
 	//COMMENTS
@@ -226,51 +197,24 @@ class PostController extends Controller
 	}
 
 	public function writer(Request $request, $page = 0){
-
-		$posts = Post::count();
-
-		$pages = ceil($posts/15);
-
-		if($page > $pages || $page < 0){
-			return redirect('post/manage/0');
-		}
-
-		$usuario = $request->user();
-		$offset = $page * 15;
-
-		$results = Post::select('id','titulo', 'fecha', 'usuario_id', 'estado')
-		->where('usuario_id', $usuario->id)
-		->offset($offset)
-		->limit(15)
-		->orderBy('id', 'desc')
-		->with([
-			'user' => function($query) {
-				$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-			}
-			])->get();
-
-		return view('manage.writer', ['posts' => $results, 'page' => $page, 'pages' => $pages ]);
-	} 
-
-	public function writersearch(Request $request) {
-
-		$this->validate($request, [
-			'busqueda' => 'required'
-		]);
-
-		$busqueda = $request->busqueda;
-		$usuario = $request->user();
-
-		$posts = 
-		Post::select('id','titulo', 'imagen', 'fecha', 'usuario_id', 'estado')
-			->where('usuario_id', $usuario->id)
-			->where('titulo', 'like', '%'.$busqueda.'%')
+		
+		$user = $request->user();
+		
+		$posts = Post::select('id','titulo', 'created_at', 'usuario_id', 'estado_id')
+			->where('usuario_id', $user->id)
+			->orderBy('id', 'desc')
 			->with([
 				'user' => function($query) {
 					$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-				}
+				},
+				'status'
 			])->get();
+		
+		foreach($posts as $post) {
+			$date = strtotime($post->created_at);
+			$post->fecha = date('d-m-Y', $date);
+		}
 
-		return view('manage.search.writer', ['posts' => $posts, 'search' => $busqueda]);
-	}
+		return view('manage.writer', ['posts' => $posts]);
+	} 
 }

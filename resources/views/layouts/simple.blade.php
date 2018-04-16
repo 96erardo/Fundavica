@@ -53,7 +53,7 @@
 						</div>
 						@if(Auth::user()->tipo == 1)
 							<div class="navbar-item">
-								<a class="button is-small is-primary is-outlined" href="{{url('post/manage/0')}}">
+								<a class="button is-small is-primary is-outlined" href="{{url('post/manage')}}">
 									<span>Administrar</span>
 									<span class="icon">
 										<i class="fa fa-line-chart" aria-hidden="true"></i>
@@ -62,7 +62,7 @@
 							</div>
 						@elseif(Auth::user()->tipo == 2)
 							<div class="navbar-item">
-								<a class="button is-small is-primary is-outlined" href="{{url('post/manage/writer/0')}}">
+								<a class="button is-small is-primary is-outlined" href="{{url('post/manage/writer')}}">
 									<span>Administrar</span>
 									<span class="icon">
 										<i class="fa fa-line-chart" aria-hidden="true"></i>

@@ -104,24 +104,14 @@ class UserController extends Controller
         return redirect("user/manage/0");       
     }
 
-    public function manage($page = 0){
+    public function manage(){
 
-        $users = User::count();
+        $users = User::select('id','nombre', 'apellido', 'usuario', 'correo', 'role_id', 'estado_id')
+            ->where('estado_id', '>=', '2')
+            ->where('estado_id', '<=', '3')
+            ->with(['role', 'status'])
+            ->get();
 
-        $pages = ceil($users/15);
-
-        if($page > $pages || $page < 0){
-            return redirect('user/manage/0');
-        }
-
-        $offset = $page * 15;
-
-        $results = User::select('id','nombre', 'apellido', 'usuario', 'correo', 'tipo', 'estado')
-        ->where('estado', '>=', '1')
-        ->offset($offset)
-        ->limit(15)
-        ->get();
-
-        return view('manage.users', ['users' => $results, 'page' => $page, 'pages' => $pages ]);
+        return view('manage.users', ['users' => $users]);
     }
 }

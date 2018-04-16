@@ -7,37 +7,11 @@
 @section('subtitle', 'Crea, edita y administra las publicaciones a tu gusto')
 
 @section('options')
-<li class="is-active"><a href="{{ url('post/manage/writer/0') }}">Publicaciones</a></li>
+<li class="is-active"><a href="{{ url('post/manage/writer') }}">Publicaciones</a></li>
 @endsection
 
 @section('content')
 <section class="background-is-soft">
-	<br>
-	<div class="container">
-		<div class="columns">
-			<div class="column is-12">
-				<form method="POST" action="{{ url('post/manage/writer/search') }}">
-					{{ csrf_field() }}
-					<div class="field has-addons">
-						<div class="control is-expanded">
-							<input id="search" name="busqueda" type="text" class="input" placeholder="Busca la publicación que te interese">
-						</div>
-						<div class="control">
-							<button type="submit" class="button is-info">
-								<span>Buscar</span>
-								<span class="icon">
-									<i class="fa fa-search" aria-hidden="true"></i>
-								</span>
-							</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<br>
-</section>
-<section class="is-light">
 	<br>
 	<div class="container">
 		@include('partials.message')
@@ -50,7 +24,7 @@
 			<div class="column is-12">
 				<div class="card-plain">
 					<div class="card-content">
-						<table class="table is-fullwidth">
+						<table class="tabla table is-fullwidth">
 							<thead>
 								<tr>
 									<th>Título</th>
@@ -68,11 +42,7 @@
 									<td>{{ $post->user->nombre }} {{ $post->user->apellido }}</td>
 									<td>{{ $post->user->usuario }}</td>
 									<td>{{ $post->fecha }}</td>
-									@if($post->estado == 1)
-										<td>Público</td>
-									@else
-										<td>Oculto</td>
-									@endif
+									<td>{{ $post->status->nombre_visible }}</td>
 									<td>
 										<div class="dropdown">
 											<div class="dropdown-trigger">
@@ -121,15 +91,6 @@
 		</div>
 	</div>
 </section>
-<br>
-<div class="container">
-	<div class="level">
-		<div class="level-left"></div>
-		<div class="level-right">
-			<a href="{{ url('posts/manage/'.($page-1)) }}" class="button is-primary is-outlined level-item" {{ $page > 0 ? '': 'disabled' }}>Anterior</a>
-			<a href="{{ url('posts/manage/'.$page) }}" class="button is-primary is-outlined level-item" {{ ($page+1) == $pages ? 'disabled':'' }}>Siguiente</a>
-		</div>
-	</div>
-<div>
+<br><br>
 @endsection
 

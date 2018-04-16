@@ -7,41 +7,15 @@
 @section('subtitle', 'Crea, edita y administra las publicaciones a tu gusto')
 
 @section('options')
-<li class="is-active"><a href="{{ url('post/manage/0') }}">Publicaciones</a></li>
-<li><a href="{{ url('user/manage/0') }}">Usuarios</a></li>
-<li><a href="{{ url('donation/manage/0') }}">Donaciones</a></li>
+<li class="is-active"><a href="{{ url('post/manage') }}">Publicaciones</a></li>
+<li><a href="{{ url('user/manage') }}">Usuarios</a></li>
+<li><a href="{{ url('donation/manage') }}">Donaciones</a></li>
 <li ><a href="{{ url('account/manage') }}">Cuentas Bancarias</a></li>
 @endsection
 
 @section('content')
 <section class="background-is-soft">
-	<br>
-	<div class="container">
-		<div class="columns">
-			<div class="column is-12">
-				<form method="POST" action="{{ url('post/manage/search') }}">
-					{{ csrf_field() }}
-					<div class="field has-addons">
-						<div class="control is-expanded">
-							<input id="search" name="busqueda" type="text" class="input" placeholder="Busca la publicación que te interese">
-						</div>
-						<div class="control">
-							<button type="submit" class="button is-info">
-								<span>Buscar</span>
-								<span class="icon">
-									<i class="fa fa-search" aria-hidden="true"></i>
-								</span>
-							</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<br>
-</section>
-<section class="is-light">
-	<br>
+	<br><br>
 	<div class="container">
 		@include('partials.message')
 		<div class="columns">
@@ -53,7 +27,7 @@
 			<div class="column is-12">
 				<div class="card-plain">
 					<div class="card-content">
-						<table class="table is-fullwidth">
+						<table class="tabla table is-fullwidth is-hoverable">
 							<thead>
 								<tr>
 									<th>Título</th>
@@ -71,11 +45,7 @@
 									<td>{{ $post->user->nombre }} {{ $post->user->apellido }}</td>
 									<td>{{ $post->user->usuario }}</td>
 									<td>{{ $post->fecha }}</td>
-									@if($post->estado == 1)
-										<td>Público</td>
-									@else
-										<td>Oculto</td>
-									@endif
+									<td>{{ $post->status->nombre_visible}}</td>
 									<td>
 										<div class="dropdown">
 											<div class="dropdown-trigger">
@@ -96,7 +66,7 @@
 															Editar
 														</a>
 													@endif
-													@if($post->estado == 1)
+													@if($post->estado_id == 2)
 													<a class="dropdown-item" href="{{ url('post/hide/'.$post->id)}}">
 														Ocultar
 													</a>
@@ -105,7 +75,7 @@
 														Publicar
 													</a>
 													@endif
-													@if(Auth::user()->tipo == 1 && $post->id > 4)
+													@if(Auth::user()->isAdmin() && $post->id > 4)
 													<a class="dropdown-item del" href="{{ url('post/delete/'.$post->id) }}">
 														Eliminar
 													</a>
@@ -123,16 +93,7 @@
 			</div>
 		</div>
 	</div>
+	<br><br>
 </section>
-<br>
-<div class="container">
-	<div class="level">
-		<div class="level-left"></div>
-		<div class="level-right">
-			<a href="{{ url('posts/manage/'.($page-1)) }}" class="button is-primary is-outlined level-item" {{ $page > 0 ? '': 'disabled' }}>Anterior</a>
-			<a href="{{ url('posts/manage/'.$page) }}" class="button is-primary is-outlined level-item" {{ ($page+1) == $pages ? 'disabled':'' }}>Siguiente</a>
-		</div>
-	</div>
-<div>
 @endsection
 

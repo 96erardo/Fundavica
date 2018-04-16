@@ -34,21 +34,13 @@ Route::group(['prefix' => '/'], function() {
 
 Auth::routes();
 
-Route::get('post/manage/{page}', 'PostController@manage')->middleware('isAdmin');
+Route::get('post/manage', 'PostController@manage')->middleware('isAdmin');
 
-Route::post('post/manage/search', 'PostController@search')->middleware('isAdmin');
+Route::get('post/manage/writer', 'PostController@writer')->middleware('isWriter');
 
-Route::get('post/manage/writer/{page}', 'PostController@writer')->middleware('isWriter');
+Route::get('user/manage', 'UserController@manage')->middleware('isAdmin');
 
-Route::post('post/manage/writer/search', 'PostController@writersearch')->middleware('isWriter');
-
-Route::get('user/manage/{page}', 'UserController@manage')->middleware('isAdmin');
-
-Route::post('users/manage/search', 'UserController@search')->middleware('isAdmin');
-
-Route::get('donation/manage/{page}', 'DonationController@manage')->middleware('isAdmin');
-
-Route::post('donations/manage/search', 'DonationController@search')->middleware('isAdmin');
+Route::get('donation/manage', 'DonationController@manage')->middleware('isAdmin');
 
 Route::get('account/manage', 'AccountController@manage')->middleware('isAdmin');
 

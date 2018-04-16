@@ -7,48 +7,22 @@
 @section('subtitle', '¡Dale reconocimiento a quien se lo merece!')
 
 @section('options')
-<li><a href="{{ url('post/manage/0') }}">Publicaciones</a></li>
-<li><a href="{{ url('user/manage/0') }}">Usuarios</a></li>
-<li class="is-active"><a href="{{ url('donation/manage/0') }}">Donaciones</a></li>
+<li><a href="{{ url('post/manage') }}">Publicaciones</a></li>
+<li><a href="{{ url('user/manage') }}">Usuarios</a></li>
+<li class="is-active"><a href="{{ url('donation/manage') }}">Donaciones</a></li>
 <li ><a href="{{ url('account/manage') }}">Cuentas Bancarias</a></li>
 @endsection
 
 @section('content')
 <section class="background-is-soft">
-	<br>
-	<div class="container">
-		<div class="columns">
-			<div class="column is-12">
-				<form method="POST" action="{{ url('donations/manage/search') }}">
-					{{ csrf_field() }}
-					<div class="field has-addons">
-						<div class="control is-expanded">
-							<input id="search" name="busqueda" type="text" class="input" placeholder="Busca la donación que te interese">
-						</div>
-						<div class="control">
-							<button type="submit" class="button is-info">
-								<span>Buscar</span>
-								<span class="icon">
-									<i class="fa fa-search" aria-hidden="true"></i>
-								</span>
-							</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<br>
-</section>
-<section class="background-is-white">
-	<br>
+	<br><br>
 	<div class="container">
 		@include('partials.message')
 		<div class="columns is-centered">
 			<div class="column is-12">
 				<div class="card-plain">
 					<div class="card-content">
-						<table class="table is-fullwidth">
+						<table class="tabla table is-fullwidth is-hoverable">
 							<thead>
 								<tr>
 									<th>Nombre</th>
@@ -111,13 +85,6 @@
 						</table>
 					</div>
 				</div>
-			</div>
-		</div>
-		<div class="level">
-			<div class="level-left"></div>
-			<div class="level-right">
-				<a href="{{ url('donations/manage/'.($page-1)) }}" class="button is-primary is-outlined level-item" {{ $page > 0 ? '': 'disabled' }}>Anterior</a>
-				<a href="{{ url('donations/manage/'.$page) }}" class="button is-primary is-outlined level-item" {{ ($page+1) == $pages ? 'disabled':'' }}>Siguiente</a>
 			</div>
 		</div>
 	</div>

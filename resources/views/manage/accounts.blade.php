@@ -7,9 +7,9 @@
 @section('subtitle', 'Deja que la comunidad te ayude, dale tus datos.')
 
 @section('options')
-<li><a href="{{ url('post/manage/0') }}">Publicaciones</a></li>
-<li><a href="{{ url('user/manage/0') }}">Usuarios</a></li>
-<li><a href="{{ url('donation/manage/0') }}">Donaciones</a></li>
+<li><a href="{{ url('post/manage') }}">Publicaciones</a></li>
+<li><a href="{{ url('user/manage') }}">Usuarios</a></li>
+<li><a href="{{ url('donation/manage') }}">Donaciones</a></li>
 <li  class="is-active"><a href="{{ url('account/manage') }}">Cuentas Bancarias</a></li>
 @endsection
 
@@ -58,7 +58,7 @@
 			<div class="column is-12">
 				<div class="card-plain">
 					<div class="card-content">
-						<table class="table is-fullwidth">
+						<table class="tabla table is-fullwidth is-hoverable">
 							<thead>
 								<tr>
 									<th>Identificador</th>

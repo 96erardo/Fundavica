@@ -75,8 +75,8 @@ class RegisterController extends Controller
             'usuario' => $data['usuario'],
             'correo' => $data['correo'],
             'clave' => bcrypt($data['clave']),
-            'tipo' => 3, 
-            'estado' => 1
+            'role_id' => 1, 
+            'estado_id' => 1
         ]);
     }
 
@@ -104,9 +104,8 @@ class RegisterController extends Controller
      * @return \Iluminate\Http\Response
      */
     public function confirmEmail($token) {
-        User::where('token', $token)->firstOrFail()->hasVerified();
+        User::where('verifyme_token', $token)->firstOrFail()->hasVerified();
 
         return redirect('login')->with('status', 'Cuenta de correo confirmada, por favor inicia sesión.');
     }
-
 }

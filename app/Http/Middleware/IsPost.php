@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Post;
+use App\Models\Post;
 
 class IsPost
 {

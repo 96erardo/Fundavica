@@ -15,7 +15,7 @@ class User extends Authenticatable
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at'];
     protected $fillable = [
-        'nombre', 'apellido', 'usuario', 'correo', 'clave',
+        'nombre', 'apellido', 'usuario', 'correo', 'clave', 'role_id', 'estado_id'
     ];
 
     public function posts () {
@@ -37,7 +37,7 @@ class User extends Authenticatable
         parent::boot();
 
         static::creating(function($user){
-            $user->token = str_random(40);
+            $user->verifyme_token = str_random(40);
         });
     }
 
@@ -46,8 +46,8 @@ class User extends Authenticatable
      */
     public function hasVerified() {
 
-        $this->verified = true;
-        $this->token = null;
+        $this->estado_id = 2;
+        $this->verifyme_token = null;
 
         $this->save();
     }
@@ -61,12 +61,33 @@ class User extends Authenticatable
     }
 
     public function getType() {
-        if($this->tipo == 1)
+        if($this->role_id == 4)
             return "Administrador";
-        if($this->tipo == 2)
+        if($this->role_id == 3)
             return "Redactor";
-        if($this->tipo == 3)
+        if($this->role_id == 2 || $this->role_id == 1)
             return "Estandar";
+    }
+    
+    public function isNormal() {
+        if($this->role_id == 2 || $this->role_id == 1)
+            return true;
+
+        return false;
+    }
+
+    public function isWriter() {
+        if($this->role_id == 3)
+            return true;
+
+        return false;
+    }
+
+    public function isAdmin() {
+        if($this->role_id == 4)
+            return true;
+
+        return false;
     }
 
     public function isActive() {

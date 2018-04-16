@@ -54,7 +54,7 @@
 							<h5 class="subtitle is-5">
 								Queremos dar las gracias toda estas personas que nos han ayudado economicamente a mantener y mejorar el servicio que prestamos en esta fundación a la comunidad.
 							</h5>
-							<table id="myTable" class="table is-fullwidth is-bordered is-striped">
+							<table class="tabla table is-fullwidth is-hoverable is-striped">
 								<thead>
 									<tr>
 										<th><abbr>Nombre</abbr></th>
@@ -65,9 +65,9 @@
 								<tbody>
 									@foreach($donations as $donation)
 										<tr>
-											<th>{{$donation->nombre}} {{$donation->apellido}}</th>
-											<th>{{$donation->cedula}}</th>
-											<th>{{$donation->fecha}}</th>
+											<td>{{$donation->nombre}} {{$donation->apellido}}</td>
+											<td>{{$donation->cedula}}</td>
+											<td>{{$donation->fecha}}</td>
 										</tr>
 									@endforeach
 								</tbody>

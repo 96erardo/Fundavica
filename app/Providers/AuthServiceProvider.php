@@ -32,11 +32,11 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::define('admin-functions', function ($user) {
-            return $user->tipo == 1;
+            return $user->role_id == 4;
         });
 
         Gate::define('writer-functions', function($user) {
-            return $user->tipo == 2;
+            return $user->role_id == 3;
         });
     }
 }

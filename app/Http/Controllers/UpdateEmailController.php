@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\EmailUpdated;
-use App\User;
+use App\Models\User;
 
 class UpdateEmailController extends Controller
 {

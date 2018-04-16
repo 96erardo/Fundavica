@@ -51,3 +51,8 @@
     </div>
 </section>
 @endsection
+
+@section('script')
+	<script src="{{ URL::asset('js/plugins/instafeed/instafeed.min.js') }}"></script>
+	<script src="{{ URL::asset('js/components/gallery/gallery.js') }}"></script>
+@endsection

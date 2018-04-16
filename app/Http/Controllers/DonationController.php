@@ -3,43 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Donations;
-use App\Account;
+use App\Models\Donations;
+use App\Models\Account;
 
 class DonationController extends Controller
 {
     //
 
-    public function manage($page = 0){
+    public function manage() {
 
-        $donations = Donations::count();
+        $donations = Donations::all();
 
-        $pages = ceil($donations/15);
-
-        if($page > $pages || $page < 0){
-            return redirect('donation/manage/0');
-        }
-
-        $offset = $page * 15;
-
-        $results = 
-        Donations::offset($offset)
-            ->limit(15)
-            ->get();
-
-        return view('manage.donations', ['donations' => $results, 'page' => $page, 'pages' => $pages ]);
+        return view('manage.donations', ['donations' => $donations]);
     }
 
     public function add(Request $request){
 
     	$this->validate($request, [
-    			'nombre' => 'required',
-    			'apellido' => 'required',
-    			'cedula' => 'required|numeric',
-    			'correo' => 'required|email',
-    			'monto' => 'required|numeric',
-    			'fecha' => 'required|date'
-    		]);
+    		'nombre' => 'required',
+    		'apellido' => 'required',
+    		'cedula' => 'required|numeric',
+    		'correo' => 'required|email',
+    		'monto' => 'required|numeric',
+    		'fecha' => 'required|date'
+    	]);
 
         $donacion = new Donations;
 
@@ -66,7 +53,7 @@ class DonationController extends Controller
         $donacion->estado = 1;
         $donacion->save();
 
-        return redirect('donation/manage/0')->with('status', 'Donación validada');
+        return redirect('donation/manage')->with('status', 'Donación validada');
     }
 
     public function reject($id) {
@@ -75,7 +62,7 @@ class DonationController extends Controller
         $donacion->estado = 0;
         $donacion->save();
 
-        return redirect('donation/manage/0')->with('status', 'Donación rechazada');
+        return redirect('donation/manage')->with('status', 'Donación rechazada');
     }
 
     public function delete($id) {
@@ -83,7 +70,7 @@ class DonationController extends Controller
         $donacion = Donations::where('id', $id)->first();
         $donacion->delete();
 
-        return redirect('donation/manage/0')->with('status', 'Donación eliminada');
+        return redirect('donation/manage')->with('status', 'Donación eliminada');
     }
 
     public function search(Request $request) {

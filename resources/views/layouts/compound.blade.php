@@ -8,7 +8,10 @@
 	<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/app.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/custom.css') }}">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<script src="{{URL::asset('js/app.js')}}"></script>
+	<script src="{{ URL::asset('js/plugins/jquery/jquery-3.3.1.min.js') }}"></script>
+	<script src="{{ URL::asset('js/plugins/datatables/jquery.dataTables.js') }}"></script>
+	<script src="{{ URL::asset('js/plugins/datatables-bulma/js/dataTables.bulma.min.js') }}"></script>
+	<script src="{{ URL::asset('js/app.js') }}"></script>
 </head>
 <body>
 	<nav class="navbar" role="navigation" aria-label="aria-label">
@@ -51,16 +54,16 @@
 								</span>
 							</a>
 						</div>
-						@if(Auth::user()->tipo == 1)
+						@if(Auth::user()->isAdmin()) 
 							<div class="navbar-item">
-								<a class="button is-small is-primary is-outlined" href="{{url('post/manage/0')}}">
+								<a class="button is-small is-primary is-outlined" href="{{url('post/manage')}}">
 									<span>Administrar</span>
 									<span class="icon">
 										<i class="fa fa-line-chart" aria-hidden="true"></i>
 									</span>
 								</a>
 							</div>
-						@elseif(Auth::user()->tipo == 2)
+						@elseif(Auth::user()->isWriter()) 
 							<div class="navbar-item">
 								<a class="button is-small is-primary is-outlined" href="{{url('post/manage/writer/0')}}">
 									<span>Administrar</span>

@@ -3,24 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Account;
+use App\Models\Account;
 
 class AccountController extends Controller
 {
     //
     public function manage() {
 
-    	$resultados = Account::all();
+    	$accounts = Account::all();
 
-    	return view('manage.accounts', ['accounts' => $resultados]);
+    	return view('manage.accounts', ['accounts' => $accounts]);
     }
 
     public function add(Request $request) {
 
     	$this->validate($request, [
-    			'medio' => 'required',
-    			'nro' => 'required'
-    		]);
+    		'medio' => 'required',
+    		'nro' => 'required'
+    	]);
 
     	$cuenta = new Account;
 
