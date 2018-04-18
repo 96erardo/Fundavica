@@ -13,7 +13,7 @@ class PostController extends Controller
 {
 	public function post($id){
 
-		$result = Post::where('id', $id)
+		$post = Post::where('id', $id)
 		->with([
 			'category' => function($query) {
 				$query->select('id', 'nombre', 'color');
@@ -30,13 +30,18 @@ class PostController extends Controller
 			}
 		])->first();
 
-		$date = strtotime($result->created_at);
-		$result->fecha = date('d-m-Y', $date);
+		$date = strtotime($post->created_at);
+		$post->fecha = date('d-m-Y', $date);
+
+		foreach($post->comments as $comment) {
+			$date = strtotime($comment->created_at);
+			$comment->fecha = date('d-m-Y', $date);
+		}
 		
-		return view('page.article', ['pub' => $result]);
+		return view('page.article', ['pub' => $post]);
 	}
 
-	public function manage($page = 0){
+	public function manage() {
 		
 		$posts = Post::select('id','titulo', 'created_at', 'usuario_id', 'estado_id')
 			->orderBy('created_at', 'desc')
@@ -68,17 +73,16 @@ class PostController extends Controller
 			'titulo' => 'required|string',
 			'imagen' => 'required|string',
 			'contenido' => 'required|string'
-			]);
+		]);
 
 		$usuario = $request->user();
 		$publicacion = new Post;
 		$publicacion->titulo = $request->titulo;
 		$publicacion->imagen = $request->imagen;
 		$publicacion->contenido = $request->contenido;
-		$publicacion->fecha = date("Y-m-d");
 		$publicacion->usuario_id = $usuario->id;
 		$publicacion->categoria_id = $request->categoria;
-		$publicacion->estado_id = 1;
+		$publicacion->estado_id = 2;
 		$publicacion->save();
 
 		return redirect('/');
@@ -104,7 +108,6 @@ class PostController extends Controller
 		$publicacion->imagen = $request->imagen;
 		$publicacion->categoria_id = $request->categoria;
 		$publicacion->contenido = $request->contenido;
-		$publicacion->fecha = date("Y-m-d");
 		$publicacion->save();
 		
 		return redirect('post/'.$request->post->id);
@@ -113,7 +116,7 @@ class PostController extends Controller
 	public function hide($id) {
 
 		$publicacion = Post::where('id', $id)->first();
-		$publicacion->estado = 0;
+		$publicacion->hide();
 		$publicacion->save();
 
 		return redirect('post/manage')->with('status', 'Publicación "'. $publicacion->titulo .'" ocultada.');
@@ -122,7 +125,7 @@ class PostController extends Controller
 	public function show($id) {
 
 		$publicacion = Post::where('id', $id)->first();
-		$publicacion->estado = 1;
+		$publicacion->show();
 		$publicacion->save();
 
 		return redirect('post/manage')->with('status', 'Publicación "'. $publicacion->titulo .'" visible.');
@@ -149,8 +152,7 @@ class PostController extends Controller
 		$comentario->usuario_id = $usuario->id;
 		$comentario->publicacion_id = $post;
 		$comentario->contenido = $request->contenido;
-		$comentario->fecha = date("Y-m-d");
-		$comentario->estado = 1;
+		$comentario->show();
 		$comentario->save();
 
 		return redirect('post/'.$post)->with('status', '!Comentario agregado correctamente!');
@@ -163,7 +165,6 @@ class PostController extends Controller
 			]);
 
 		$comment->contenido = $request->comentario;
-		$comment->fecha = date("Y-m-d");
 		$comment->save();
 
 		return redirect('post/'.$post)->with('status', '¡Comentario editado correctamente!');
@@ -173,7 +174,7 @@ class PostController extends Controller
 
 		$comentario = Comment::where('id', $comment)->first();
 
-		$comentario->estado = 0;
+		$comentario->hide();
 		$comentario->save();
 
 		return redirect('post/'.$post)->with('status', '¡Comentario ocultado correctamente!');
@@ -183,7 +184,7 @@ class PostController extends Controller
 
 		$comentario = Comment::where('id', $comment)->first();
 
-		$comentario->estado = 1;
+		$comentario->show();
 		$comentario->save();
 
 		return redirect('post/'.$post)->with('status', '¡Comentario visible!');

@@ -12,6 +12,7 @@
 	<script src="{{ URL::asset('js/plugins/datatables/jquery.dataTables.js') }}"></script>
 	<script src="{{ URL::asset('js/plugins/datatables-bulma/js/dataTables.bulma.min.js') }}"></script>
 	<script src="{{ URL::asset('js/app.js') }}"></script>
+	@yield('top_script')
 </head>
 <body>
 	<nav class="navbar" role="navigation" aria-label="aria-label">

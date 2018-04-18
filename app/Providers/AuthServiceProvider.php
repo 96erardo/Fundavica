@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Post;
-use App\Comment;
+use App\Models\Post;
+use App\Models\Comment;
 use App\Policies\CommentPolicy;
 use App\Policies\PostPolicy;
 use Illuminate\Support\Facades\Gate;

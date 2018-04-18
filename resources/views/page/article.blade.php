@@ -86,25 +86,25 @@
 				@if(count($pub->comments) > 0)
 					<div class="card-content">
 						@foreach($pub->comments as $commentary)
-							@if($commentary->estado == 1)
+							@if($commentary->isPublic())
 								<article class="media">
 									<div class="media-content">
 										<div class="content">
 											<p>
-												<strong>{{$commentary->user->nombre}} {{$commentary->user->apellido}}</strong> <small>{{$commentary->user->usuario}} {{$commentary->fecha}}</small>
+												<strong>{{$commentary->user->nombre}} {{$commentary->user->apellido}}</strong> <small>{{$commentary->user->usuario}}</small> <span style="float: right;">{{$commentary->fecha}}</span>
 												<br>
 												{{$commentary->contenido}}
 											</p>
 											@if(Auth::check())
 												<div class="level is-mobile">
 													<div class="level-left">
-														@if(Auth::user()->tipo == 1)
-														<a class="level-item" href="{{ url('comment/hide/'.$pub->id.'/'.$commentary->id) }}">
-															<i class="fa fa-eye" aria-hidden="true"></i>
-														</a>
-														<a class="level-item del" href="{{url('comment/delete/'.$pub->id.'/'.$commentary->id)}}">
-															<i class="fa fa-eraser" aria-hidden="true"></i>
-														</a>
+														@if(Auth::user()->isAdmin())
+															<a class="level-item" href="{{ url('comment/hide/'.$pub->id.'/'.$commentary->id) }}">
+																<i class="fa fa-eye" aria-hidden="true"></i>
+															</a>
+															<a class="level-item del" href="{{url('comment/delete/'.$pub->id.'/'.$commentary->id)}}">
+																<i class="fa fa-eraser" aria-hidden="true"></i>
+															</a>
 														@endif
 														@if(Auth::user()->id == $commentary->usuario_id)
 															<a class="level-item edt">
@@ -120,7 +120,7 @@
 										</div>
 									</div>
 									@if(Auth::check())
-										@if(Auth::user()->tipo == 1 && $commentary->estado == 0)
+										@if(Auth::user()->isAdmin() && $commentary->isHidden())
 											<div class="media-right">
 												<span class="tag is-warning">
 													<i class="fa fa-exclamation" aria-hidden="true"></i>
@@ -160,7 +160,7 @@
 									@endif
 								@endif
 							@elseif(Auth::check())
-								@if(Auth::user()->tipo == 1)
+								@if(Auth::user()->isAdmin())
 									<article class="media">
 										<div class="media-content">
 											<div class="content">
@@ -172,7 +172,7 @@
 												@if(Auth::check())
 													<div class="level is-mobile">
 														<div class="level-left">
-															@if(Auth::user()->tipo == 1)
+															@if(Auth::user()->isAdmin())
 															<a class="level-item" href="{{ url('comment/show/'.$pub->id.'/'.$commentary->id) }}">
 																<i class="fa fa-eye" aria-hidden="true"></i>
 															</a>
@@ -194,7 +194,7 @@
 											</div>
 										</div>
 										@if(Auth::check())
-											@if(Auth::user()->tipo == 1 && $commentary->estado == 0)
+											@if(Auth::user()->isAdmin() && $commentary->estado == 0)
 												<div class="media-right">
 													<span class="tag is-warning">
 														<i class="fa fa-exclamation" aria-hidden="true"></i>

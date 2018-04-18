@@ -2,8 +2,8 @@
 
 @section('title', 'Editar Artículo')
 
-@section('script')
-<script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
+@section('top_script')
+	<script src="{{ URL::asset('js/plugins/tinymce/tinymce.min.js') }}"></script>
 @endsection
 
 @section('content')
@@ -100,4 +100,8 @@
 		</div>
 	</div>
 </section>
+@endsection
+
+@section('script')
+	<script src="{{ URL::asset('js/components/post/create.js') }}"></script>
 @endsection

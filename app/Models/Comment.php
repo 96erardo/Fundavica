@@ -6,10 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
-	//
     protected $table = "comentario";
     protected $primaryKey = "id";
-    public $timestamps = false;
 
     public function post() {
     	return $this->belongsTo('App\Models\Post', 'publicacion_id', 'id');
@@ -17,5 +15,27 @@ class Comment extends Model
 
     public function user() {
     	return $this->belongsTo('App\User', 'usuario_id', 'id');
+    }
+
+    public function isPublic() {
+        if($this->estado_id == 2) 
+            return true;
+        
+        return false;
+    }
+
+    public function isHidden() {
+        if($this->estado_id == 1) 
+            return true;
+        
+        return false;
+    }
+
+    public function hide() {
+        $this->estado_id = 1;
+    }
+
+    public function show() {
+        $this->estado_id = 2;
     }
 }

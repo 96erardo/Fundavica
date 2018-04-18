@@ -85,17 +85,17 @@ Route::group(['prefix' => 'post'], function(){
 
     Route::get('{id}', 'PostController@post')->where('id', '[0-9]+')->middleware('IsPost');
 
-    Route::get('new', 'PostController@add')->middleware('can:create,App\Post');
+    Route::get('new', 'PostController@add')->middleware('can:create,App\Models\Post');
 
-    Route::post('new', 'PostController@added')->middleware('can:create,App\Post');
+    Route::post('new', 'PostController@added')->middleware('can:create,App\Models\Post');
 
     Route::get('edit/{post}', 'PostController@edit')->where('post', '[0-9]+')->middleware('auth');
 
     Route::post('edit/{post}', 'PostController@edited')->where('post', '[0-9]+')->middleware('can:update,post');
 
-    Route::get('hide/{id}', 'PostController@hide')->where('id', '[0-9]+')->middleware('can:hide,App\Post');
+    Route::get('hide/{id}', 'PostController@hide')->where('id', '[0-9]+')->middleware('can:hide,App\Models\Post');
 
-    Route::get('show/{id}', 'PostController@show')->where('id', '[0-9]+')->middleware('can:show,App\Post');
+    Route::get('show/{id}', 'PostController@show')->where('id', '[0-9]+')->middleware('can:show,App\Models\Post');
 
     Route::get('delete/{post}', 'PostController@delete')->where('post', '[0-9]+')->middleware('can:delete,post');
 

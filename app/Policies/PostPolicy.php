@@ -11,7 +11,7 @@ class PostPolicy
     use HandlesAuthorization;
 
     public function create(User $user) {
-        return $user->tipo !== 3;
+        return $user->role_id >= 3;
     }
 
     public function update(User $user, Post $post) {
@@ -19,14 +19,14 @@ class PostPolicy
     }
 
     public function delete(User $user, Post $post) {
-        return ($user->id == $post->usuario_id) || ($user->tipo == 1);
+        return ($user->id == $post->usuario_id) || $user->isAdmin();
     }
 
     public function hide(User $user) {
-        return $user->tipo !== 3;
+        return $user->role_id >= 3;
     }
 
     public function show(User $user) {
-        return $user->tipo !== 3;
+        return $user->role_id >= 3;
     }
 }
