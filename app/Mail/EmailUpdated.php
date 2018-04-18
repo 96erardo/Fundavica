@@ -15,7 +15,7 @@ class EmailUpdated extends Mailable
     public $user;
     
     public $email;
-
+    
     /**
      * Create a new message instance.
      *

@@ -18,7 +18,7 @@
                             <h4 class="title is-4">Saludos {{$user->nombre}} {{$user->apellido}}</h4>
                             <p>
                                 Para confirmar su cambio de correo electrónico en Fundavica, es necesario que
-                                haga click <a href="{{ url('user/update/email/'.$email.'/'.$user->token) }}">aquí</a>
+                                haga click <a href="{{ url('user/update/email/'.$email.'/'.$user->verifyme_token) }}">aquí</a>
                             </p>
                             <br>
                             <p>

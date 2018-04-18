@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ChangePassword;
+use App\Models\PasswordResets;
 use App\User;
 
 class ResetPasswordController extends Controller
@@ -43,7 +44,7 @@ class ResetPasswordController extends Controller
 
     public function resetView(Request $request, $token) {
 
-        $exist = User::where('token', $token)->count();
+        $exist = PasswordResets::where('token', $token)->count();
 
         if($exist == 0)
             return redirect('/');
@@ -58,11 +59,23 @@ class ResetPasswordController extends Controller
         ]);
 
         $user = User::where('correo', $request->correo)->first();
-        $user->token = str_random(40);
+        $pr = PasswordResets::where('correo', $request->correo);
 
-        $user->save();
+        if($pr->count() > 0) {            
+            $password_resets = $pr->first();
+            $password_resets->token = str_random(40);
+            $password_resets->created_at = date('Y-m-d H:i:s');
+            $password_resets->save();
+        
+        } else {
+            $password_resets = new PasswordResets();
+            $password_resets->correo = $request->correo;
+            $password_resets->token = str_random(40);
+            $password_resets->created_at = date('Y-m-d H:i:s');
+            $password_resets->save();
+        }
        
-        Mail::to($user->correo)->send(new ChangePassword($user));
+        Mail::to($user->correo)->send(new ChangePassword($user, $password_resets->token));
 
         return redirect('login')->with('status', 'Ingrese a su correo, le hemos enviado un correo para restaurar su contraseña');
     }
@@ -73,11 +86,12 @@ class ResetPasswordController extends Controller
             'clave' => 'required|string|min:6|confirmed',
             'token' => 'required|string|min:40'
         ]);
-
-        $user = User::where('token', $request->token)->first();
+        
+        $pasword_resets = PasswordResets::where('token', $request->token)->first();
+        $user = User::where('correo', $pasword_resets->correo)->first();
         $user->clave = bcrypt($request->clave);
-        $user->token = null;
         $user->save();
+        $pasword_resets->delete();
 
         return redirect('login')->with('status', 'Contraseña reestablecida');
     }

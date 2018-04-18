@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\EmailUpdated;
-use App\Models\User;
+use App\User;
 
 class UpdateEmailController extends Controller
 {
@@ -42,7 +42,7 @@ class UpdateEmailController extends Controller
         $usuario->clave = bcrypt($request->clave);
 
         if($isEmailDifferent) {
-            $usuario->token = str_random(40);            
+            $usuario->verifyme_token = str_random(40);            
             $message = 'Hemos enviado un correo de confirmación a '.$request->correo.', mientras podrá seguir utilizando el antiguo.';
             Mail::to($request->correo)->send(new EmailUpdated($usuario, $request->correo));
         }
@@ -56,13 +56,13 @@ class UpdateEmailController extends Controller
 
     public function validateEmail(Request $request, $email, $token) {
 
-        $user = User::where('token', $token)->first();
+        $user = User::where('verifyme_token', $token)->first();
         
         if(!$user)
             return redirect('/');
 
         $user->correo = $email;
-        $user->token = null;
+        $user->verifyme_token = null;
         $user->save();
 
         Auth::logout();
