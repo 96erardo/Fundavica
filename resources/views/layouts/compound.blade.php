@@ -34,12 +34,12 @@
                             <i class="fa fa-facebook-official" aria-hidden="true"></i>
                         </span>
                     </a>
-                    <a class="navbar-item" href="#" href="" target="_blank">
+                    <a class="navbar-item" href="https://www.instagram.com/fundavica/" target="_blank">
                         <span class="icon" style="color: #cd486b;">
                             <i class="fa fa-instagram" aria-hidden="true"></i>
                         </span>
                     </a>
-                    <a class="navbar-item" href="#" href="https://twitter.com/search?vertical=default&q=Fundavica&src=typd" target="_blank">
+                    <a class="navbar-item" href="https://twitter.com/search?vertical=default&q=Fundavica&src=typd" target="_blank">
                         <span class="icon" style="color: #1dcaff;">
                             <i class="fa fa-twitter" aria-hidden="true"></i>
                         </span>

@@ -53,21 +53,21 @@
 											</div>
 											<div class="dropdown-menu" id="dropdown-menu2" role="menu">
 												<div class="dropdown-content">
-													@if($user->tipo == 1)
+													@if($user->isAdmin())
 														<a class="dropdown-item" href="{{ url('user/writer/'.$user->id) }}">
 															Hacer usuario redactor
 														</a>
 														<a class="dropdown-item" href="{{ url('user/normal/'.$user->id) }}">
 															Hacer usuario normal
 														</a>
-													@elseif($user->tipo == 2)
+													@elseif($user->isWriter())
 														<a href="{{ url('user/admin/'.$user->id) }}" class="dropdown-item">
 															Hacer usuario administrador
 														</a>
 														<a class="dropdown-item" href="{{ url('user/normal/'.$user->id) }}">
 															Hacer usuario normal
 														</a>
-													@elseif($user->tipo == 3)
+													@elseif($user->isNormal())
 														<a href="{{ url('user/admin/'.$user->id) }}" class="dropdown-item">
 															Hacer usuario administrador
 														</a>
@@ -75,6 +75,17 @@
 															Hacer usuario redactor
 														</a>
 													@endif
+													{{--
+													@if($user->estado_id == 2 && $user->id != Auth::user()->id)
+														<a href="{{ url('user/block/'.$user->id) }}" class="dropdown-item">
+															Bloquear
+														</a>
+													@elseif($user->estado_id == 3)
+														<a href="{{ url('user/unblock/'.$user->id) }}" class="dropdown-item">
+															Desbloquear
+														</a>
+													@endif
+													--}}
 												</div>
 											</div>
 										</div>

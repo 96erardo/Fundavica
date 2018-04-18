@@ -54,54 +54,54 @@ class UserController extends Controller
     public function admin($id) {
 
         $usuario = User::where('id', $id)->first();
-        $usuario->tipo = 1;
+        $usuario->role_id = 4;
         $usuario->save();
 
-        return redirect("user/manage/0")->with('status', $usuario->usuario.' es ahora un administrador en Fundavica');;       
+        return redirect("user/manage")->with('status', $usuario->usuario.' es ahora un administrador en Fundavica');;       
     }
 
     public function writer(Request $request, $id) {
 
         $usuario = User::where('id', $id)->first();
-        $usuario->tipo = 2;
+        $usuario->role_id = 3;
         $usuario->save();
 
         if($usuario->usuario == $request->user()->usuario) {
             return redirect('logout');
         }
 
-        return redirect("user/manage/0")->with('status', $usuario->usuario.' es ahora un redactor en Fundavica');       
+        return redirect("user/manage")->with('status', $usuario->usuario.' es ahora un redactor en Fundavica');       
     }
 
     public function normal(Request $request, $id) {
 
         $usuario = User::where('id', $id)->first();
-        $usuario->tipo = 3;
+        $usuario->role_id = 1;
         $usuario->save();
 
         if($usuario->usuario == $request->user()->usuario) {
             return redirect('logout');
         }
 
-        return redirect("user/manage/0")->with('status', $usuario->usuario.' es ahora un usuario estandar en Fundavica');;       
+        return redirect("user/manage")->with('status', $usuario->usuario.' es ahora un usuario estandar en Fundavica');       
     }
 
     public function block($id) {
 
         $usuario = User::where('id', $id)->first();
-        $usuario->estado = 2;
+        $usuario->estaod_id = 3;
         $usuario->save();
 
-        return redirect("user/manage/0");       
+        return redirect("user/manage")->with('status', $usuario->usuario.' ha sido baneado correctamente');       
     }
 
     public function unblock($id) {
 
         $usuario = User::where('id', $id)->first();
-        $usuario->estado = 1;
+        $usuario->estaod_id = 2;
         $usuario->save();
 
-        return redirect("user/manage/0");       
+        return redirect("user/manage")->with('status', $usuario->usuario.' ha sido desbloqueado correctamente');       
     }
 
     public function manage(){

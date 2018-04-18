@@ -59,23 +59,27 @@ class FundavicaController extends Controller
       'busqueda' => 'required'
     ]);
 
-    $busqueda = $request->busqueda;
+    $search = $request->busqueda;
 
-    $posts = 
-    Post::select('id','titulo', 'imagen', 'fecha', 'usuario_id', 'categoria_id', 'estado')
-    ->where('titulo', 'like', '%'.$busqueda.'%')
-    ->where('estado', '1')
-    ->orderBy('id', 'desc')
-    ->with([
-      'user' => function($query) {
-        $query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-      },
-      'category' => function($query) {
-        $query->select('id', 'nombre', 'color');
-      }
-    ])->get();
+    $posts = Post::select('id','titulo', 'imagen', 'created_at', 'usuario_id', 'categoria_id', 'estado_id')
+      ->where('titulo', 'like', '%'.$search.'%')
+      ->where('estado_id', '2')
+      ->orderBy('id', 'desc')
+      ->with([
+        'user' => function($query) {
+          $query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+        },
+        'category' => function($query) {
+          $query->select('id', 'nombre', 'color');
+        }
+      ])->get();
 
-    return view('index.search', ['posts' => $posts, 'search' => $busqueda]);
+    foreach($posts as $post) {
+      $date = strtotime($post->created_at);
+      $post->fecha = date('d-m-Y', $date);
+    }
+
+    return view('index.search', ['posts' => $posts, 'search' => $search]);
   }
 
   public function album(){

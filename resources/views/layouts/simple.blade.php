@@ -33,7 +33,7 @@
                             <i class="fa fa-facebook-official" aria-hidden="true"></i>
                         </span>
                     </a>
-                    <a class="navbar-item" href="#" target="_blank">
+                    <a class="navbar-item" href="https://www.instagram.com/fundavica/" target="_blank">
                         <span class="icon" style="color: #cd486b;">
                             <i class="fa fa-instagram" aria-hidden="true"></i>
                         </span>
