@@ -8,7 +8,7 @@ class UserModUser extends Model
 {
     protected $table = 'u_modifica_u';
     protected $primaryKey = 'created_at';
-    public $timestamp = false;
+    public $timestamps = false;
     public $incrementing = false;
 
     public function updater () {

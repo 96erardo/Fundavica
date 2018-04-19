@@ -8,7 +8,7 @@ class UserModComment extends Model
 {
     protected $table = 'u_modifica_c';
     protected $primaryKey = 'created_at';
-    public $timestamp = false;
+    public $timestamps = false;
     public $incrementing = false;
 
     public function user () {

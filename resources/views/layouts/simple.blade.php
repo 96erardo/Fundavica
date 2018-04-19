@@ -54,7 +54,7 @@
 								</span>
 							</a>
 						</div>
-						@if(Auth::user()->tipo == 1)
+						@if(Auth::user()->isAdmin())
 							<div class="navbar-item">
 								<a class="button is-small is-primary is-outlined" href="{{url('post/manage')}}">
 									<span>Administrar</span>
@@ -63,7 +63,7 @@
 									</span>
 								</a>
 							</div>
-						@elseif(Auth::user()->tipo == 2)
+						@elseif(Auth::user()->isWriter())
 							<div class="navbar-item">
 								<a class="button is-small is-primary is-outlined" href="{{url('post/manage/writer')}}">
 									<span>Administrar</span>

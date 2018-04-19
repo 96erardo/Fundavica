@@ -13,9 +13,12 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\Event' => [
-            'App\Listeners\EventListener',
-        ],
+        // POST EVENTS
+        'App\Events\UpdatedPost' => ['App\Listeners\StoreUpdateHistory'],
+        'App\Events\HiddenPost' => ['App\Listeners\StoreHiddenHistory'],
+        'App\Events\ShowPost' => ['App\Listeners\StoreShownHistory'],
+        // USER EVENTS
+
     ];
 
     /**

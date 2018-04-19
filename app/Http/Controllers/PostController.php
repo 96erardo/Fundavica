@@ -4,41 +4,67 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Events\HiddenPost;
+use App\Events\ShowPost;
+use App\Events\UpdatedPost;
 use App\Models\Post;
 use App\Models\Category;
-use App\Models\User;
 use App\Models\Comment;
+use App\Models\UserModPost;
+use App\User;
 
 class PostController extends Controller
 {
 	public function post($id){
 
 		$post = Post::where('id', $id)
-		->with([
-			'category' => function($query) {
-				$query->select('id', 'nombre', 'color');
-			},
-			'user' => function($query){
-				$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-			},
-			'comments' => function($query) {
-				$query->with([
-					'user' => function($query) {
-						$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-					} 
-					]);
-			}
-		])->first();
+			->with([
+				'category' => function($query) {
+					$query->select('id', 'nombre', 'color');
+				},
+				'user' => function($query){
+					$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+				},
+				'comments' => function($query) {
+					$query->with([
+						'user' => function($query) {
+							$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+						} 
+						]);
+				}
+			])->first();
 
+		$history = UserModPost::where('publicacion_id', $id)
+			->orderBy('created_at', 'desc')
+			->limit(10)
+			->with([
+				'user' => function ($query) {
+					$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+				},
+				'post' => function ($query) {
+					$query->select('id', 'titulo');
+				},
+				'operation'
+			])->get();
+		
 		$date = strtotime($post->created_at);
-		$post->fecha = date('d-m-Y', $date);
+		$post->fecha = date('d-m-Y H:i:s', $date);
 
-		foreach($post->comments as $comment) {
+		foreach ($post->comments as $comment) {
 			$date = strtotime($comment->created_at);
 			$comment->fecha = date('d-m-Y', $date);
 		}
+
+
+		foreach ($history as $operation) {
+			$date = strtotime($operation->created_at);
+			$operation->created_at = date('d-m-Y H:i:s', $date);
+		}
 		
-		return view('page.article', ['pub' => $post]);
+		return view('page.article', [
+			'pub' => $post,
+			'history' => $history,
+		]);
 	}
 
 	public function manage() {
@@ -103,32 +129,38 @@ class PostController extends Controller
 			'contenido' => 'required',
 			]);
 
-		$publicacion = Post::where('id', $request->post->id)->first();
-		$publicacion->titulo = $request->titulo;
-		$publicacion->imagen = $request->imagen;
-		$publicacion->categoria_id = $request->categoria;
-		$publicacion->contenido = $request->contenido;
-		$publicacion->save();
+		$post = Post::where('id', $request->post->id)->first();
+		$post->titulo = $request->titulo;
+		$post->imagen = $request->imagen;
+		$post->categoria_id = $request->categoria;
+		$post->contenido = $request->contenido;
+		$post->save();
+
+		event(new UpdatedPost($post));
 		
 		return redirect('post/'.$request->post->id);
 	}
 
 	public function hide($id) {
 
-		$publicacion = Post::where('id', $id)->first();
-		$publicacion->hide();
-		$publicacion->save();
+		$post = Post::where('id', $id)->first();
+		$post->hide();
+		$post->save();
 
-		return redirect('post/manage')->with('status', 'Publicación "'. $publicacion->titulo .'" ocultada.');
+		event(new HiddenPost($post));
+
+		return redirect('post/manage')->with('status', 'Publicación "'. $post->titulo .'" ocultada.');
 	}
 
 	public function show($id) {
 
-		$publicacion = Post::where('id', $id)->first();
-		$publicacion->show();
-		$publicacion->save();
+		$post = Post::where('id', $id)->first();
+		$post->show();
+		$post->save();
 
-		return redirect('post/manage')->with('status', 'Publicación "'. $publicacion->titulo .'" visible.');
+		event(new ShowPost($post));
+
+		return redirect('post/manage')->with('status', 'Publicación "'. $post->titulo .'" visible.');
 	}
 
 	public function delete(Post $post) {

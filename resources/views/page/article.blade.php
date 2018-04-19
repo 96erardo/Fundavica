@@ -32,6 +32,34 @@
 					</div>
 				</div>
 			</div>
+			@if(Auth::check())
+				@if(Auth::user()->isAdmin())
+					<div class="column is-4">
+						<div class="card-plain">
+							<div class="card-content">
+								<h2 class="subtitle is-2">Historial</h2>
+								<table class="table is-striped is-fullwidth">
+									<thead></thead>
+									<tbody>
+										@foreach($history as $op)
+											<tr>
+												<td style="color: #209CEE">{{ $op->user->usuario}}</td>
+												<td style="color: #FF3860" class="has-text-centered">{{ $op->operation->nombre_visible }}</td>
+												<td>{{ $op->created_at }}</td>
+											</tr>
+										@endforeach
+										<tr>
+											<td style="color: #209CEE"> {{ $pub->user->usuario }}</td>
+											<td style="color: #FF3860" class="has-text-centered">CREADO</td>
+											<td>{{ $pub->fecha }}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				@endif
+			@endif
 		</div>
 	</div>
 </section>
