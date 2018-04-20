@@ -4,7 +4,7 @@
 
 @section('header', 'FUNDAVICA')
 
-@section('subtitle', 'Fundación vida y cámino para el autista en Guayana')
+@section('subtitle', 'Fundación vida y camino para el autista en Guayana')
 
 @section('options')
 <li><a href="{{ url('posts/0') }}">Publicaciones</a></li>
