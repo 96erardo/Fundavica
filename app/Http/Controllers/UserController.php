@@ -11,23 +11,6 @@ use Session;
 
 class UserController extends Controller
 {
-    public function search(Request $request) {
-
-        $this->validate($request, [
-            'busqueda' => 'required'
-        ]);
-
-        $busqueda = $request->busqueda;
-
-        $users = 
-        User::select('id','nombre', 'apellido', 'usuario', 'correo', 'tipo', 'estado')
-        ->where('usuario', 'like', '%'.$busqueda.'%')
-        ->orwhere('nombre', 'like', '%'.$busqueda.'%')
-        ->orwhere('apellido', 'like', '%'.$busqueda.'%')
-        ->get();
-
-        return view('manage.search.users', ['users' => $users, 'search' => $busqueda]);
-    }
 
     //USER DATA
     public function profile(Request $request){
@@ -89,7 +72,7 @@ class UserController extends Controller
     public function block($id) {
 
         $usuario = User::where('id', $id)->first();
-        $usuario->estaod_id = 3;
+        $usuario->estado_id = 3;
         $usuario->save();
 
         return redirect("user/manage")->with('status', $usuario->usuario.' ha sido baneado correctamente');       
@@ -98,7 +81,7 @@ class UserController extends Controller
     public function unblock($id) {
 
         $usuario = User::where('id', $id)->first();
-        $usuario->estaod_id = 2;
+        $usuario->estado_id = 2;
         $usuario->save();
 
         return redirect("user/manage")->with('status', $usuario->usuario.' ha sido desbloqueado correctamente');       
@@ -112,6 +95,6 @@ class UserController extends Controller
             ->with(['role', 'status'])
             ->get();
 
-        return view('manage.users', ['users' => $users]);
+        return view('auth.manage', ['users' => $users]);
     }
 }

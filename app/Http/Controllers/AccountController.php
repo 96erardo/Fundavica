@@ -12,7 +12,7 @@ class AccountController extends Controller
 
     	$accounts = Account::all();
 
-    	return view('manage.accounts', ['accounts' => $accounts]);
+    	return view('account.manage', ['accounts' => $accounts]);
     }
 
     public function add(Request $request) {

@@ -50,7 +50,7 @@ class FundavicaController extends Controller
       $post->fecha = date('d-m-Y', $date);
     }
 
-    return view('index.posts', ['posts' => $results, 'page' => $page, 'pages' => $pages ]);
+    return view('post.index', ['posts' => $results, 'page' => $page, 'pages' => $pages ]);
   }
 
   public function search(Request $request) {
@@ -79,17 +79,17 @@ class FundavicaController extends Controller
       $post->fecha = date('d-m-Y', $date);
     }
 
-    return view('index.search', ['posts' => $posts, 'search' => $search]);
+    return view('post.search', ['posts' => $posts, 'search' => $search]);
   }
 
   public function album(){
 
-    return view('index.gallery');
+    return view('gallery.index');
   }
 
   public function contact() {
 
-    return view('index.contact'); 
+    return view('contact.index'); 
   }
 
   public function opinion(Request $request) {
@@ -118,7 +118,7 @@ class FundavicaController extends Controller
       $donation->fecha = date('d-m-Y', $date);
     }
 
-   return view('index.donations', ['accounts' => $accounts, 'donations' => $donations]);
+   return view('donation.index', ['accounts' => $accounts, 'donations' => $donations]);
  }
 
  public function comingSoon(){

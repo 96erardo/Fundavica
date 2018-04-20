@@ -61,7 +61,7 @@ class PostController extends Controller
 			$operation->created_at = date('d-m-Y H:i:s', $date);
 		}
 		
-		return view('page.article', [
+		return view('post.read', [
 			'pub' => $post,
 			'history' => $history,
 		]);
@@ -83,14 +83,14 @@ class PostController extends Controller
 			$post->fecha = date('d-m-Y', $date);
 		}
 
-		return view('manage.posts', ['posts' => $posts]);
+		return view('post.manage', ['posts' => $posts]);
 	}
 
 	public function add(){
 
 		$categories = Category::all();
 
-		return view('page.create-article', ['categories' => $categories]);
+		return view('post.create', ['categories' => $categories]);
 	}
 
 	public function added(Request $request) {
@@ -118,7 +118,7 @@ class PostController extends Controller
 		
 		$categories = Category::all();
 
-		return view('page.edit-article', ['categories' => $categories, 'post' => $post]);
+		return view('post.update', ['categories' => $categories, 'post' => $post]);
 	}
 
 	public function edited(Request $request, Post $post) {

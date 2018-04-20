@@ -14,7 +14,7 @@ class DonationController extends Controller
 
         $donations = Donations::all();
 
-        return view('manage.donations', ['donations' => $donations]);
+        return view('donation.manage', ['donations' => $donations]);
     }
 
     public function add(Request $request){
