@@ -103,35 +103,37 @@ Route::group(['prefix' => 'post'], function(){
 
 Route::group(['prefix' => 'comment'], function() {
     
-    Route::post('new/{post}', 'PostController@comment')->where('post', '[0-9]+')->middleware('auth');
+    Route::post('new/{post}', 'CommentController@create')->where('post', '[0-9]+')->middleware('auth');
 
-    Route::post('edit/{post}/{comment}', 'PostController@editComment')
+    Route::post('edit/{post}/{comment}', 'CommentController@update')
         ->where([
             'post' => '[0-9]+',
             'comment' => '[0-9]+'
         ])
         ->middleware('can:update,comment');
+    
+    Route::get('read/{comment}', 'CommentController@read');
 
-    Route::get('hide/{post}/{comment}', 'PostController@hideComment')
-        ->where([
-            'post' => '[0-9]+',
-            'comment' => '[0-9]+'
-        ])
-        ->middleware('isAdmin');
-
-    Route::get('show/{post}/{comment}', 'PostController@showComment')
-        ->where([
-            'post' => '[0-9]+',
-            'comment' => '[0-9]+'
-        ])
-        ->middleware('isAdmin');
-
-    Route::get('delete/{post}/{comment}', 'PostController@deleteComment')
+    Route::get('delete/{post}/{comment}', 'CommentController@delete')
         ->where([
             'post' => '[0-9]+',
             'comment' => '[0-9]+'
         ])
         ->middleware('can:delete,post,comment');
+
+    Route::get('hide/{post}/{comment}', 'CommentController@hide')
+        ->where([
+            'post' => '[0-9]+',
+            'comment' => '[0-9]+'
+        ])
+        ->middleware('isAdmin');
+
+    Route::get('show/{post}/{comment}', 'CommentController@show')
+        ->where([
+            'post' => '[0-9]+',
+            'comment' => '[0-9]+'
+        ])
+        ->middleware('isAdmin');
 });
 
 Route::group(['prefix' => 'donations'], function() {

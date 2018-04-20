@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Comment;
 
 class Comment extends Model
 {
@@ -15,6 +16,10 @@ class Comment extends Model
 
     public function user() {
     	return $this->belongsTo('App\User', 'usuario_id', 'id');
+    }
+
+    public function responses() {
+        return $this->hasMany('App\Models\Comment', 'respuesta_id', 'id');
     }
 
     public function isPublic() {

@@ -26,14 +26,21 @@ class PostController extends Controller
 					$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
 				},
 				'comments' => function($query) {
-					$query->with([
-						'user' => function($query) {
-							$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-						} 
+					$query->select('id', 'contenido', 'created_at', 'usuario_id', 'publicacion_id', 'estado_id')
+						->where('respuesta_id', null)
+						->orderBy('created_at', 'asc')
+						->with([
+							'user' => function($query) {
+								$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+							},
 						]);
-				}
+				},
 			])->first();
 
+		foreach($post->comments as $comment) {
+			$comment->responses = Comment::where('respuesta_id', $comment->id)->count();
+		}
+		
 		$history = UserModPost::where('publicacion_id', $id)
 			->orderBy('created_at', 'desc')
 			->limit(10)
@@ -169,64 +176,6 @@ class PostController extends Controller
 		$post->delete();
 
 		return redirect('post/manage')->with('status', 'Publicación "'. $publicacion .'" eliminada.');
-	}
-
-	//COMMENTS
-	public function comment(Request $request, $post) {
-
-		$this->validate($request, [
-			'contenido' => 'required'
-			]);
-
-		$usuario = $request->user();
-
-		$comentario = new Comment;
-		$comentario->usuario_id = $usuario->id;
-		$comentario->publicacion_id = $post;
-		$comentario->contenido = $request->contenido;
-		$comentario->show();
-		$comentario->save();
-
-		return redirect('post/'.$post)->with('status', '!Comentario agregado correctamente!');
-	}
-
-	public function editComment(Request $request, $post, Comment $comment) {
-
-		$this->validate($request, [
-			'comentario' => 'required'
-			]);
-
-		$comment->contenido = $request->comentario;
-		$comment->save();
-
-		return redirect('post/'.$post)->with('status', '¡Comentario editado correctamente!');
-	}
-
-	public function hideComment($post, $comment) {
-
-		$comentario = Comment::where('id', $comment)->first();
-
-		$comentario->hide();
-		$comentario->save();
-
-		return redirect('post/'.$post)->with('status', '¡Comentario ocultado correctamente!');
-	}
-
-	public function showComment($post, $comment) {
-
-		$comentario = Comment::where('id', $comment)->first();
-
-		$comentario->show();
-		$comentario->save();
-
-		return redirect('post/'.$post)->with('status', '¡Comentario visible!');
-	}  
-
-	public function deleteComment(Post $post, Comment $comment) {
-
-		$comment->delete();
-
-		return redirect('post/'.$post->id)->with('status', '¡Comentario eliminado correctamente!');
 	}
 
 	public function writer(Request $request, $page = 0){
