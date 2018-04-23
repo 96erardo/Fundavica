@@ -103,7 +103,7 @@ Route::group(['prefix' => 'post'], function(){
 
 Route::group(['prefix' => 'comment'], function() {
     
-    Route::post('new/{post}', 'CommentController@create')->where('post', '[0-9]+')->middleware('auth');
+    Route::post('new/{post}/{response?}', 'CommentController@create')->where('post', '[0-9]+')->middleware('auth');
 
     Route::post('edit/{post}/{comment}', 'CommentController@update')
         ->where([
@@ -119,7 +119,7 @@ Route::group(['prefix' => 'comment'], function() {
             'post' => '[0-9]+',
             'comment' => '[0-9]+'
         ])
-        ->middleware('can:delete,post,comment');
+        ->middleware('can:delete,comment');
 
     Route::get('hide/{post}/{comment}', 'CommentController@hide')
         ->where([

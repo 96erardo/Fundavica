@@ -33,13 +33,17 @@ class PostController extends Controller
 							'user' => function($query) {
 								$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
 							},
+							'responses' => function($query) {
+								$query->where('estado_id', 2)
+									->with([
+										'user' => function($query) {
+											$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+										}
+									]);
+							}
 						]);
 				},
 			])->first();
-
-		foreach($post->comments as $comment) {
-			$comment->responses = Comment::where('respuesta_id', $comment->id)->count();
-		}
 		
 		$history = UserModPost::where('publicacion_id', $id)
 			->orderBy('created_at', 'desc')
@@ -60,6 +64,11 @@ class PostController extends Controller
 		foreach ($post->comments as $comment) {
 			$date = strtotime($comment->created_at);
 			$comment->fecha = date('d-m-Y', $date);
+
+			foreach ($comment->responses as $response) {
+				$date = strtotime($comment->created_at);
+				$response->fecha = date('d-m-Y', $date);
+			}
 		}
 
 

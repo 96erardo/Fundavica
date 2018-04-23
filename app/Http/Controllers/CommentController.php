@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Comment;
+use App\Models\Post;
 
 class CommentController extends Controller
 {
-    public function create(Request $request, $post) {
+    public function create(Request $request, $post, $response = null) {
 
 		$this->validate($request, [
 			'contenido' => 'required'
@@ -19,6 +20,7 @@ class CommentController extends Controller
 		$comentario->usuario_id = $usuario->id;
 		$comentario->publicacion_id = $post;
 		$comentario->contenido = $request->contenido;
+		$comentario->respuesta_id = $response;
 		$comentario->show();
 		$comentario->save();
 

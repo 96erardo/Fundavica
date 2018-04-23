@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\User;
 use App\Models\Comment;
+use App\Models\Post;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CommentPolicy
@@ -14,7 +15,7 @@ class CommentPolicy
         return $user->id == $comment->usuario_id;
     }
 
-    public function delete(User $user, Post $post, Comment $comment) {
-        return (!$user->tipo != 1 || $user->id == $comment->usuario_id);
+    public function delete(User $user, Comment $comment) {
+        return ($user->isAdmin() || $user->id == $comment->usuario_id);
     }
 }

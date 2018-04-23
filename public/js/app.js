@@ -20,29 +20,6 @@ $(function() {
     });
 
     /**
-     * Mostrar el textarea del comentario cuando se desea editar 
-     */
-    $('.media a.edt').click(function(event) {
-        event.preventDefault();
-
-        var $comment = $(event.target).closest('article.media');
-        var $textarea = $comment.next();
-        
-        $comment.toggle();
-        $textarea.toggle();
-    });
-
-    $('.comment button.cnl').click(function(event) {
-        event.preventDefault();
-
-        var $textarea = $(event.target).closest('div.comment');
-        var $comment = $textarea.prev();
-        
-        $comment.toggle();
-        $textarea.toggle();
-    });
-
-    /**
      * Mostrar modal para preguntar si se está seguro de eliminar
      */
     $('a.del').click(function(event) {

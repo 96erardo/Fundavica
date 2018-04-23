@@ -116,75 +116,87 @@
 						<div class="card-content">
 							@foreach($pub->comments as $commentary)
 								@if($commentary->isPublic())
-									<div class="commentary" data-identifier="{{ $commentary->id }}" data-user="{{ $commentary->user->usuario }}"> 
-										<article class="media is-principal">
+									<div class="commentary"> 
+										<article class="media is-principal" data-identifier="{{ $commentary->id }}">
 											<div class="media-content">
-												<div class="content">
-													<p>
-														<strong>{{$commentary->user->nombre}} {{$commentary->user->apellido}}</strong> <small>{{$commentary->user->usuario}}</small> <span>{{$commentary->fecha}}</span>
-														<br>
+												<p>
+													<strong>{{$commentary->user->nombre}} {{$commentary->user->apellido}}</strong> <small>{{$commentary->user->usuario}}</small> <span>{{$commentary->fecha}}</span>
+													<br>
+													<span class="comment-content">
 														{{$commentary->contenido}}
-													</p>
-													<div class="level is-mobile">
-														<div class="level-left">
-															@if(Auth::check())
-																@if(Auth::user()->isAdmin())
-																	<a class="level-item" href="{{ url('comment/hide/'.$pub->id.'/'.$commentary->id) }}">
-																		<i class="fa fa-eye" aria-hidden="true"></i>
-																	</a>
-																	<a class="level-item del" href="{{url('comment/delete/'.$pub->id.'/'.$commentary->id)}}">
-																		<i class="fa fa-eraser" aria-hidden="true"></i>
-																	</a>
-																@endif
-																@if(Auth::user()->id == $commentary->usuario_id)
-																	<a class="level-item edt">
-																		<i class="fa fa-pencil" aria-hidden="true"></i>
-																	</a>
-																	<a class="level-item del" href="{{url('comment/delete/'.$pub->id.'/'.$commentary->id)}}">
-																		<i class="fa fa-eraser" aria-hidden="true"></i>
-																	</a>
-																@endif												
+													</span>
+												</p>
+												<div class="level is-mobile">
+													<div class="level-left">
+														@if(Auth::check())
+															@if(Auth::user()->isAdmin())
+																<a class="level-item" href="{{ url('comment/hide/'.$pub->id.'/'.$commentary->id) }}">
+																	<i class="fa fa-eye" aria-hidden="true"></i>
+																</a>
+																<a class="level-item del" href="{{url('comment/delete/'.$pub->id.'/'.$commentary->id)}}">
+																	<i class="fa fa-eraser" aria-hidden="true"></i>
+																</a>
 															@endif
-														</div>
+															@if(Auth::user()->id == $commentary->usuario_id)
+																<a class="level-item edt" href="{{ url('comment/edit/'.$pub->id.'/'.$commentary->id) }}">
+																	<i class="fa fa-pencil" aria-hidden="true"></i>
+																</a>
+																<a class="level-item del" href="{{url('comment/delete/'.$pub->id.'/'.$commentary->id)}}">
+																	<i class="fa fa-eraser" aria-hidden="true"></i>
+																</a>
+															@endif												
+														@endif
+													</div>
+													@if(Auth::check())
 														<div class="level-right">
-															<a class="level-item response">
+															<a class="level-item response" href="{{ url('comment/new/'.$pub->id.'/'.$commentary->id) }}">
 																Responder
 															</a>
 														</div>
-													</div>
+													@endif
 												</div>
 											</div>
 										</article>
-									</div>
-									@if(Auth::check())
-										@if(Auth::user()->id == $commentary->usuario_id)
-											<div class="comment" style="display:none;">
-												<form method="POST" action="{{ url('comment/edit/'.$pub->id.'/'.$commentary->id) }}">
-													{{ csrf_field() }}
-													<textarea class="textarea" name="comentario">{{ $commentary->contenido }}</textarea>
-													<br>
-													<div class="level">
-														<div class="level-left"></div>
-														<div class="level-right">
-															<button class="button is-primary level-item">
-																<span>Editar Comentario</span>
-																<span class="icon">
-																	<i class="fa fa-commenting-o" aria-hidden="true"></i>
-																</span>
-															</button>
-															<button class="button is-danger level-item cnl">
-																<span>Cancelar</span>
-																<span class="icon">
-																	<i class="fa fa-ban" aria-hidden="true"></i>
-																</span>
-															</button>
+										@foreach($commentary->responses as $response)
+											<div class="columns">
+												<div class="column is-11 is-offset-1">
+													<article class="media is-response" data-identifier="{{ $response->id }}">
+														<div class="media-content">
+															<div class="content">
+																<p>
+																	<strong>{{$response->user->nombre}} {{$response->user->apellido}}</strong> <small>{{$response->user->usuario}}</small> <span>{{$response->fecha}}</span>
+																	<br>
+																	<span class="comment-content">{{ $response->contenido }}<span>
+																</p>
+																<div class="level is-mobile">
+																	<div class="level-left">
+																		@if(Auth::check())
+																			@if(Auth::user()->isAdmin())
+																				<a class="level-item" href="{{ url('comment/hide/'.$pub->id.'/'.$response->id) }}">
+																					<i class="fa fa-eye" aria-hidden="true"></i>
+																				</a>
+																				<a class="level-item del" href="{{url('comment/delete/'.$pub->id.'/'.$response->id)}}">
+																					<i class="fa fa-eraser" aria-hidden="true"></i>
+																				</a>
+																			@endif
+																			@if(Auth::user()->id == $response->usuario_id)
+																				<a class="level-item edt" href="{{ url('comment/edit/'.$pub->id.'/'.$response->id) }}">
+																					<i class="fa fa-pencil" aria-hidden="true"></i>
+																				</a>
+																				<a class="level-item del" href="{{url('comment/delete/'.$pub->id.'/'.$response->id)}}">
+																					<i class="fa fa-eraser" aria-hidden="true"></i>
+																				</a>
+																			@endif												
+																		@endif
+																	</div>
+																</div>
+															</div>
 														</div>
-													</div>
-												</form>
-												<hr>
+													</article>
+												</div>
 											</div>
-										@endif
-									@endif
+										@endforeach
+									</div>
 								@elseif(Auth::check())
 									@if(Auth::user()->isAdmin())
 										<article class="media">
@@ -261,6 +273,7 @@
 										@endif
 									@endif
 								@endif
+								<br>
 							@endforeach
 						</div>
 					@endif
