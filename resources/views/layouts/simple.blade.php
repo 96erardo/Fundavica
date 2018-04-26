@@ -7,10 +7,17 @@
 	<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/app.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/custom.css') }}">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="shortcut icon" href="{{{ asset('img/logo.png') }}}">
 	<script src="{{ URL::asset('js/plugins/jquery/jquery-3.3.1.min.js') }}"></script>
 	<script src="{{ URL::asset('js/plugins/datatables/jquery.dataTables.js') }}"></script>
 	<script src="{{ URL::asset('js/plugins/datatables-bulma/js/dataTables.bulma.min.js') }}"></script>
 	<script src="{{ URL::asset('js/app.js') }}"></script>
+	<script>
+		(adsbygoogle = window.adsbygoogle || []).push({
+			google_ad_client: "ca-pub-5836782406405887",
+			enable_page_level_ads: true
+		});
+	</script>
 	@yield('top_script')
 </head>
 <body>
