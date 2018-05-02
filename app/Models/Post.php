@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Cerbero\QueryFilters\FiltersRecords;
 
 class Post extends Model
 {
+    use FiltersRecords;
+
     protected $table = "publicacion";
     protected $primaryKey = "id";
 

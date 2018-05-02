@@ -113,6 +113,7 @@ class PostController extends Controller
 
 		$this->validate($request, [
 			'titulo' => 'required|string',
+			'categoria' => 'required',
 			'imagen' => 'required|string',
 			'contenido' => 'required|string'
 		]);

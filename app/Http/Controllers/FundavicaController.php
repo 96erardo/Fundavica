@@ -18,7 +18,7 @@ class FundavicaController extends Controller
     return redirect('/posts/0');
   }
 
-  public function post($page = 0){
+  public function post(Request $request, $page = 0) {
 
     $posts = Post::count();
 
