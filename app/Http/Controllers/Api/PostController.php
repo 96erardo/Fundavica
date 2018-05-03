@@ -10,6 +10,11 @@ use DB;
 
 class PostController extends Controller
 {
+    public function __construct () {
+
+        $this->middleware('jwt.auth')->except('get');
+    }    
+
     public function get(FiltersPost $filters) {
         return Post::orderBy('created_at', 'desc')->filterBy($filters)->get();
     }
@@ -31,7 +36,7 @@ class PostController extends Controller
             $post->titulo = $request->titulo;
             $post->imagen = $request->imagen;
             $post->contenido = $request->contenido;
-            $post->usuario_id = 1;
+            $post->usuario_id = $request->usuario_id;
             $post->categoria_id = $request->categoria;
             $post->estado_id = 2;
             $post->save();
@@ -52,6 +57,10 @@ class PostController extends Controller
         }
     }
 
+    public function read (Request $request, $id) {
+        return $id;
+    }
+
     public function update (Request $request) {
         
         $this->validate($request, [
@@ -61,4 +70,6 @@ class PostController extends Controller
             'categoria' => 'required',
         ]);
     }
+
+    // eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvdXNlcnMvbG9naW4iLCJpYXQiOjE1MjUzODM2NjUsImV4cCI6MTUyNTM4NzI2NSwibmJmIjoxNTI1MzgzNjY1LCJqdGkiOiJyWFRMWnJNcVFvNkJ2T2FDIn0.zttsjYlzzRPRZHROgV1XxOphGfF3MiyCH10vFmI6bwo
 }

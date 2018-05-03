@@ -60,6 +60,8 @@ class Kernel extends HttpKernel
         'isAdmin' => \App\Http\Middleware\IsAdmin::class,
         'isWriter' => \App\Http\Middleware\isWriter::class,
         'IsPost' => \App\Http\Middleware\IsPost::class,
+        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
+	    'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
         ]
     ;
 }
