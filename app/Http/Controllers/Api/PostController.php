@@ -6,16 +6,17 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\QueryFilters\FiltersPost;
 use App\Models\Post;
+use JWTAuth;
 use DB;
 
 class PostController extends Controller
 {
     public function __construct () {
 
-        $this->middleware('jwt.auth')->except('get');
+        $this->middleware('jwt.auth')->except('get', 'read');
     }    
 
-    public function get(FiltersPost $filters) {
+    public function get (FiltersPost $filters) {
         return Post::orderBy('created_at', 'desc')->filterBy($filters)->get();
     }
 
@@ -30,13 +31,17 @@ class PostController extends Controller
 
         try {
 
+            if (! $user = JWTAuth::parseToken()->authenticate() ) {
+                return response()->json(['user_not_found'], 404);
+            }
+
             DB::beginTransaction();
 
             $post = new Post;
             $post->titulo = $request->titulo;
             $post->imagen = $request->imagen;
             $post->contenido = $request->contenido;
-            $post->usuario_id = $request->usuario_id;
+            $post->usuario_id = $user->id;
             $post->categoria_id = $request->categoria;
             $post->estado_id = 2;
             $post->save();
@@ -58,10 +63,38 @@ class PostController extends Controller
     }
 
     public function read (Request $request, $id) {
-        return $id;
+        $post = Post::where('id', $id)
+			->with([
+				'category' => function($query) {
+					$query->select('id', 'nombre', 'color');
+				},
+				'user' => function($query){
+					$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+				},
+				'comments' => function($query) {
+					$query->select('id', 'contenido', 'created_at', 'usuario_id', 'publicacion_id', 'estado_id')
+						->where('respuesta_id', null)
+						->orderBy('created_at', 'asc')
+						->with([
+							'user' => function($query) {
+								$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+							},
+							'responses' => function($query) {
+								$query->where('estado_id', 2)
+									->with([
+										'user' => function($query) {
+											$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+										}
+									]);
+							}
+						]);
+				},
+            ])->first();
+            
+        return $post;
     }
 
-    public function update (Request $request) {
+    public function update (Request $request, $id) {
         
         $this->validate($request, [
             'titulo' => 'required|string',
@@ -69,7 +102,36 @@ class PostController extends Controller
             'contenido' => 'required|string',
             'categoria' => 'required',
         ]);
-    }
 
-    // eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9hcGkvdXNlcnMvbG9naW4iLCJpYXQiOjE1MjUzODM2NjUsImV4cCI6MTUyNTM4NzI2NSwibmJmIjoxNTI1MzgzNjY1LCJqdGkiOiJyWFRMWnJNcVFvNkJ2T2FDIn0.zttsjYlzzRPRZHROgV1XxOphGfF3MiyCH10vFmI6bwo
+        try {
+
+            if (! $user = JWTAuth::parseToken()->authenticate() ) {
+                return response()->json(['user_not_found'], 404);
+            }
+
+            DB::beginTransaction();
+
+            $post = Post::find($id);
+            $post->titulo = $request->titulo;
+            $post->imagen = $request->imagen;
+            $post->contenido = $request->contenido;
+            $post->usuario_id = $user->id;
+            $post->categoria_id = $request->categoria;
+            $post->save();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success'
+            ], 200);
+
+        } catch(\Exception $e) {
+            
+            DB::rollback();
+            
+            return response()->json([
+                'status' => 'error'
+            ], 500);
+        }
+    }
 }

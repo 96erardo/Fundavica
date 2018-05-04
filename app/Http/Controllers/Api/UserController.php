@@ -13,6 +13,11 @@ use DB;
 
 class UserController extends Controller
 {
+    public function __construct () {
+        $this->middleware('jwt.auth')->only('read');
+    }
+
+
     public function create (Request $request) {
         $this->validate($request, [
             'nombre' => 'required|string|max:255',
@@ -51,6 +56,12 @@ class UserController extends Controller
                 'status' => 'error',
                 'message' => $e->errorInfo[2]
             ], 500);
+        }
+    }
+
+    public function read (Request $request) {
+        if (! $user = JWTAuth::parseToken()->authenticate() ) {
+            return response()->json(['user_not_found'], 401);
         }
     }
 

@@ -54,6 +54,14 @@ class Handler extends ExceptionHandler
             return response()->view('page.not-found-post');
         }
 
+        if ($exception instanceof Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        }
+        
+        if ($exception instanceof Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }
+
         return parent::render($request, $exception);
     }
 

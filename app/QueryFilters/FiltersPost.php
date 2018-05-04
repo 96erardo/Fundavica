@@ -7,14 +7,6 @@ use App\Models\Post;
 
 class FiltersPost extends QueryFilters
 {
-    protected $implicitFilters = [
-        'comments',
-    ];
-
-    public function comments () {
-        $this->query->with('comments');
-    }
-
     public function page ($page) {
 
         if( !empty($page) ) {
@@ -33,7 +25,6 @@ class FiltersPost extends QueryFilters
         } else {
             
             $this->query->limit(16);
-        }
-        
+        }        
     }
 }
