@@ -130,7 +130,33 @@ class PostController extends Controller
             DB::rollback();
             
             return response()->json([
-                'status' => 'error'
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function delete (Request $request, $id) {
+        try {
+
+            DB::beginTransaction();
+
+            $post = Post::find($id);
+            $post->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success'
+            ], 200);
+
+        } catch (\Exception $e) {
+
+            DB::rollback();
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
             ], 500);
         }
     }

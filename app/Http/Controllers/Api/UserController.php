@@ -63,6 +63,109 @@ class UserController extends Controller
         if (! $user = JWTAuth::parseToken()->authenticate() ) {
             return response()->json(['user_not_found'], 401);
         }
+
+        User::select('id', 'nombre', 'apellido', 'usuario', 'correo', 'role_id')
+            ->where('id', $user->id)
+            ->with(['estado', 'role', 'status'])
+            ->first();
+            
+
+        return response()->json([
+            $user,
+        ], 200);
+    }
+
+    public function update(Request $request){
+        
+        $this->validate($request, [
+            'nombre' => 'required|string',
+            'apellido' => 'required|string',
+            'correo' => 'required|email',
+            'usuario' => 'required|string',
+            'clave' => 'required|min:6|confirmed'
+        ]);
+
+        if (! $user = JWTAuth::parseToken()->authenticate() ) {
+            return response()->json(['user_not_found'], 404);
+        }
+
+        $isEmailDifferent = false;
+        $isUsernameDifferent = false;
+        $message = 'Datos actualizados correctamente, por favor inicie sesión para confirmarlos.';
+
+        if($request->correo != $user->correo) {
+            $this->validate($request, ['correo' => 'unique:usuario']);
+            $isEmailDifferent = true;
+        }
+       
+        if($request->usuario != $user->usuario) {
+            $this->validate($request, ['usuario' => 'unique:usuario']);
+            $isUsernameDifferent = true;
+        }
+
+        try {
+
+            DB::beginTransaction();
+
+            $usuario = User::find('id', $user->id);
+
+            $usuario->nombre = $request->nombre;
+            $usuario->apellido = $request->apellido;
+            $usuario->usuario = mb_strtolower($request->usuario);
+            $usuario->clave = bcrypt($request->clave);
+
+            if($isEmailDifferent) {
+                $usuario->verifyme_token = str_random(40);            
+                $message = 'Hemos enviado un correo de confirmación a '.$request->correo.', mientras podrá seguir utilizando el antiguo.';
+                Mail::to($request->correo)->send(new EmailUpdated($usuario, $request->correo));
+            }
+
+            $usuario->save();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $message,
+            ]);
+        
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function delete (Request $request) {
+
+        if (! $user = JWTAuth::parseToken()->authenticate() ) {
+            return response()->json(['user_not_found'], 404);
+        }
+
+        try {
+
+            DB::beginTransaction();
+            
+            $usuario = User::find($user->id);
+            $usuario->estado_id = 4;
+            $usuario->save();
+            $usuario->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+            ], 200);
+
+        } catch (\Exception $e) {
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function login (Request $request) {

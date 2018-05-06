@@ -96,5 +96,56 @@ class CommentController extends Controller
             ->first();
 
         return $comment;
-    }
+	}
+	
+	public function update ($post, $comment) {
+		$this->validate($request, [
+			'comentario' => 'required|string'
+		]);
+
+		try {
+
+			DB::beginTransaction();
+
+			$commentary = Comment::find($comment);
+			$commentary->contenido = $request->comentario;
+			$commentary->save();
+
+			DB::commit();
+
+			return response()->json([
+				'status' => 'success',
+			], 200);
+
+		} catch (\Exception $e) {
+
+			return response()->json([
+				'status' => 'error',
+				'message' => $e->getMessage(),
+			], 500);
+		}
+	}
+
+	public function delete ($post, $comment) {
+		try {
+
+			DB::beginTransaction();
+
+			$commentary = Comment::find($comment);
+			$commentary->delete();
+
+			DB::commit();
+
+			return respone()->json([
+				'status' => 'success',
+			], 200);
+
+		} catch (\Exception $e) {
+
+			return response()->json([
+				'status' => 'error',
+				'message' => $e->getMessage(),
+			], 500);
+		}
+	}
 }
