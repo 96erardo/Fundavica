@@ -11,6 +11,7 @@ use App\Models\Donations;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OpinionMail;
+use Carbon\Carbon;
 
 class FundavicaController extends Controller
 {

@@ -62,6 +62,9 @@ class Kernel extends HttpKernel
         'IsPost' => \App\Http\Middleware\IsPost::class,
         'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
 	    'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
+        'api.post.create' => \App\Http\Middleware\Api\Posts\Create::class,
+        'api.post.update' => \App\Http\Middleware\Api\Posts\Update::class,
+        'api.post.delete' => \App\Http\Middleware\Api\Posts\Delete::class,
         ]
     ;
 }

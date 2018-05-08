@@ -4,8 +4,10 @@ use Illuminate\Http\Request;
 
 // Publicaciones
 Route::get('/posts', 'Api\PostController@get');
-Route::get('/posts/{id}', 'Api\PostController@read');
 Route::post('/posts', 'Api\PostController@create');
+Route::get('/posts/{id}', 'Api\PostController@read');
+Route::put('/posts/{id}', 'Api\PostController@update');
+Route::delete('/posts/{id}', 'Api\PostController@delete');
 
 // Comentarios
 Route::get('/posts/{post}/comments', 'Api\CommentController@get');

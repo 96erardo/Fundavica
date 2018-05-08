@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
+use League\Fractal\Resource\Collection as FractalCollection;
+use League\Fractal\Serializer\JsonApiSerializer;
+use App\Transformers\PostTransformer;
 use App\Http\Controllers\Controller;
 use App\QueryFilters\FiltersPost;
+use League\Fractal\Resource\Item;
+use Illuminate\Http\Request;
+use League\Fractal\Manager;
 use App\Models\Post;
 use JWTAuth;
 use DB;
@@ -14,10 +19,29 @@ class PostController extends Controller
     public function __construct () {
 
         $this->middleware('jwt.auth')->except('get', 'read');
+
+        $this->middleware('api.post.create')->only('create');
+        $this->middleware('api.post.update')->only('update');
+        $this->middleware('api.post.delete')->only('delete');
     }    
 
     public function get (FiltersPost $filters) {
-        return Post::orderBy('created_at', 'desc')->filterBy($filters)->get();
+        
+        try {
+            
+            $posts = Post::orderBy('created_at', 'desc')->filterBy($filters)->get();
+
+            $fractal = new Manager();
+            $fractal->setSerializer(new JsonApiSerializer);
+            $resource = new FractalCollection($posts, new PostTransformer, 'publicacion');
+
+            return response()->json($fractal->createData($resource)->toArray(), 200);
+            
+        } catch (\Exception $e) {
+
+            return $e->getMessage();
+        }
+
     }
 
     public function create (Request $request) {

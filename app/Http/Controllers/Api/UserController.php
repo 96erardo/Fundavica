@@ -172,19 +172,27 @@ class UserController extends Controller
         
         $credentials = $request->only('usuario', 'password');  
 
+        $user = User::select('id', 'usuario', 'estado_id', 'role_id')
+            ->where('usuario', $request->usuario)
+            ->first();
+
+        if ($user == null) {
+            return response()->json([
+                'usuario' => [
+                    'Estas credenciales no coinciden con nuestros registros'
+                ]
+            ], 401);
+        }
+
         try {
-            if ( ! $token = JWTAuth::attempt($credentials) ) {                
+            if ( ! $token = JWTAuth::attempt($credentials, ['role' => $user->role_id]) ) {                
                 return response()->json([
                     'usuario' => [
                         'Estas credenciales no coinciden con nuestros registros'
                     ]
                 ], 401);
 
-            } else {                
-
-                $user = User::select('id', 'usuario', 'estado_id', 'role_id')
-                    ->where('usuario', $request->usuario)
-                    ->first();
+            } else {               
 
                 if ($user->estado_id == 1) {
                     return response()->json([
