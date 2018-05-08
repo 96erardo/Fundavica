@@ -12,6 +12,9 @@ class CommentController extends Controller
 {
     public function construct () {
 		$this-middleware('jwt.auth')->only('create');
+
+		$this->middleware('api.comment.update')->only('update');
+        $this->middleware('api.comment.delete')->only('delete');
     }
 
     public function get ($post) {

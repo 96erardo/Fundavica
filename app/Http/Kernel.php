@@ -61,10 +61,14 @@ class Kernel extends HttpKernel
         'isWriter' => \App\Http\Middleware\isWriter::class,
         'IsPost' => \App\Http\Middleware\IsPost::class,
         'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
-	    'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
+        'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
+        'api.admin.access' => \App\Http\Middleware\Api\IsAdmin::class,
         'api.post.create' => \App\Http\Middleware\Api\Posts\Create::class,
         'api.post.update' => \App\Http\Middleware\Api\Posts\Update::class,
         'api.post.delete' => \App\Http\Middleware\Api\Posts\Delete::class,
+        'api.comment.create' => \App\Http\Middleware\Api\Comments\Create::class,
+        'api.comment.update' => \App\Http\Middleware\Api\Comments\Update::class,
+        'api.comment.delete' => \App\Http\Middleware\Api\Comments\Delete::class,
         ]
     ;
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Middleware\Api\Posts;
+namespace App\Http\Middleware\Api\Comment;
 
-use App\Models\Post;
+use App\Models\Comment;
 use App\Models\Token;
 use Closure;
 use JWTAuth;
@@ -23,9 +23,9 @@ class Update
         $token_string = explode(' ', $auth_header)[1];
         
         $token = new Token($token_string);
-        $post = Post::find($request->id);
+        $comment = Comment::find($request->comment);
             
-        if ( $token->get('sub') != $post->usuario_id ) {
+        if ( $token->get('sub') != $comment->usuario_id ) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unauthorized Action'
