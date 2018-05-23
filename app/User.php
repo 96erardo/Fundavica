@@ -18,6 +18,27 @@ class User extends Authenticatable
         'nombre', 'apellido', 'usuario', 'correo', 'clave', 'role_id', 'estado_id'
     ];
 
+    public static $apiFormat = [
+        'data' => [
+            'type' => 'usuario',
+            'id' => 'id',
+            'attributes' => [
+                'nombre' => 'nombre',
+                'apellido' => 'apellido',
+                'correo' => 'correo',
+                'usuario' => 'usuario',
+            ],
+            'relationships' => [
+                'role' => 'role_id',
+                'status' => 'estado_id',
+            ]
+        ],
+        'include' => [
+            'role' => 'App\Models\Role',
+            'status' => 'App\Models\UserStatus',
+        ],
+    ];
+
     public function posts () {
         return $this->hasMany('App\Models\Posts', 'usuario_id', 'id');
     }

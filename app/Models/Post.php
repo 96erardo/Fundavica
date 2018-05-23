@@ -10,7 +10,30 @@ class Post extends Model
     use FiltersRecords;
 
     protected $table = "publicacion";
+
     protected $primaryKey = "id";
+
+    public static $apiFormat = [
+        'data' => [
+            'type' => 'publicacion',
+            'id' => 'id',
+            'attributes' => [
+                'titulo' => 'titulo',
+                'imagen' => 'imagen',
+                'contenido' => 'contenido',
+            ],
+            'relationships' => [
+                'categoria' => 'categoria_id',
+                'usuario' => 'usuario_id',
+                'estado' => 'estado_id'
+            ]
+        ],
+        'include' => [
+            'user' => 'App\User',
+            'category' => 'App\Models\Category',
+            'status' => 'App\Models\EntitiesStatus',
+        ],
+    ];
 
     public function user(){
     	return $this->belongsTo('App\User', 'usuario_id', 'id');

@@ -8,6 +8,7 @@ use App\Transformers\PostTransformer;
 use App\Http\Controllers\Controller;
 use App\QueryFilters\FiltersPost;
 use League\Fractal\Resource\Item;
+use App\Formatters\Resources;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
 use App\Models\Post;
@@ -31,11 +32,7 @@ class PostController extends Controller
             
             $posts = Post::orderBy('created_at', 'desc')->filterBy($filters)->get();
 
-            $fractal = new Manager();
-            $fractal->setSerializer(new JsonApiSerializer);
-            $resource = new FractalCollection($posts, new PostTransformer, 'publicacion');
-
-            return response()->json($fractal->createData($resource)->toArray(), 200);
+            return Resources::format($posts, 'App\Models\Post');
             
         } catch (\Exception $e) {
 
@@ -87,6 +84,7 @@ class PostController extends Controller
     }
 
     public function read (Request $request, $id) {
+        
         $post = Post::where('id', $id)
 			->with([
 				'category' => function($query) {
@@ -114,6 +112,8 @@ class PostController extends Controller
 						]);
 				},
             ])->first();
+
+        return $post->touches('category') ? 'true':'false';
             
         return $post;
     }
