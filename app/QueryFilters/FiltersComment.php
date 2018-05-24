@@ -3,39 +3,9 @@
 namespace App\QueryFilters;
 
 use Cerbero\QueryFilters\QueryFilters;
-use App\Models\Post;
 
-class FiltersPost extends QueryFilters
+class FiltersComment extends QueryFilters
 {
-    protected $implicitFilters = [
-        'content',
-    ];
-
-    public function page ($page) {
-
-        if( !empty($page) ) {
-            
-            $posts = Post::count();
-            $pages = ceil( $posts/16 );
-            
-            if ($page > $pages || $page < 0) {
-                $offset = 0;
-            } else {
-                $offset = $page * 16;
-            }
-    
-            $this->query->offset($offset)->limit(16);
-        
-        } else {
-            
-            $this->query->limit(16);
-        }        
-    }
-
-    public function content () {
-        $this->query->addSelect('contenido');
-    }
-
     public function include ($include) {
         
         if (!empty($include)) {
@@ -46,7 +16,7 @@ class FiltersPost extends QueryFilters
             if (in_array('user', $relatedResources)) {
                 
                 $include['user'] = function ($query) {
-                    $query->select('id', 'nombre', 'apellido', 'correo', 'usuario', 'role_id', 'estado_id')
+                    $query->select('id', 'nombre', 'usuario', 'role_id', 'estado_id')
                         ->with(['role', 'status']);
                 };
             }

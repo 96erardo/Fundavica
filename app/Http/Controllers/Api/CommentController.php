@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\QueryFilters\FiltersComment;
 use Illuminate\Http\Request;
 use App\Models\Comment;
 use JWTAuth;
@@ -11,13 +12,14 @@ use DB;
 class CommentController extends Controller
 {
     public function construct () {
-		$this-middleware('jwt.auth')->only('create');
 
+		$this->middleware('jwt.auth')->only('create');
 		$this->middleware('api.comment.update')->only('update');
-        $this->middleware('api.comment.delete')->only('delete');
+		$this->middleware('api.comment.delete')->only('delete');
+		
     }
 
-    public function get ($post) {
+    public function get (FiltersComment $filters, $post) {
         
         $comments = Comment::where('publicacion_id', $post)
             ->where('respuesta_id', null)

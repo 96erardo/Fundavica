@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use League\Fractal\Resource\Collection as FractalCollection;
-use League\Fractal\Serializer\JsonApiSerializer;
 use App\Transformers\PostTransformer;
 use App\Http\Controllers\Controller;
 use App\QueryFilters\FiltersPost;
-use League\Fractal\Resource\Item;
 use App\Formatters\Resources;
+use App\Formatters\Resource;
+use App\Formats\Error;
 use Illuminate\Http\Request;
-use League\Fractal\Manager;
 use App\Models\Post;
 use JWTAuth;
 use DB;
@@ -28,15 +26,18 @@ class PostController extends Controller
 
     public function get (FiltersPost $filters) {
         
-        try {
+        try {            
             
-            $posts = Post::orderBy('created_at', 'desc')->filterBy($filters)->get();
+            $posts = Post::select('id', 'titulo', 'imagen', 'created_at', 'updated_at', 'usuario_id', 'categoria_id', 'estado_id')
+                ->orderBy('created_at', 'desc')
+                ->filterBy($filters)
+                ->get();
 
             return Resources::format($posts, 'App\Models\Post');
             
         } catch (\Exception $e) {
 
-            return $e->getMessage();
+            return response()->json(Error::format($e, '5xx'), 500);
         }
 
     }
@@ -69,53 +70,24 @@ class PostController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'status' => 'success'
-            ], 201);
+            return response()->json(Resource::format($post, 'App\Models\Post'), 201);
 
         } catch(\Exception $e) {
             
             DB::rollback();
             
-            return response()->json([
-                'status' => 'error'
-            ], 500);
+            return  response()->json(Error::format($e, '5xx'), 500);
         }
     }
 
-    public function read (Request $request, $id) {
+    public function read (FiltersPost $filters, $id) {
         
-        $post = Post::where('id', $id)
-			->with([
-				'category' => function($query) {
-					$query->select('id', 'nombre', 'color');
-				},
-				'user' => function($query){
-					$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-				},
-				'comments' => function($query) {
-					$query->select('id', 'contenido', 'created_at', 'usuario_id', 'publicacion_id', 'estado_id')
-						->where('respuesta_id', null)
-						->orderBy('created_at', 'asc')
-						->with([
-							'user' => function($query) {
-								$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-							},
-							'responses' => function($query) {
-								$query->where('estado_id', 2)
-									->with([
-										'user' => function($query) {
-											$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-										}
-									]);
-							}
-						]);
-				},
-            ])->first();
+        $post = Post::select('id', 'titulo', 'imagen', 'created_at', 'updated_at', 'usuario_id', 'categoria_id', 'estado_id')
+            ->where('id', $id)
+            ->filterBy($filters)
+            ->first();
 
-        return $post->touches('category') ? 'true':'false';
-            
-        return $post;
+        return Resource::format($post, 'App\Models\Post');
     }
 
     public function update (Request $request, $id) {
@@ -145,18 +117,13 @@ class PostController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'status' => 'success'
-            ], 200);
+            return response()->json(Resource::format($post, 'App\Models\Post'), 200);
 
         } catch(\Exception $e) {
             
             DB::rollback();
             
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ], 500);
+            return  response()->json(Error::format($e, '5xx'), 500);
         }
     }
 
@@ -178,10 +145,7 @@ class PostController extends Controller
 
             DB::rollback();
             
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ], 500);
+            return  response()->json(Error::format($e, '5xx'), 500);
         }
     }
 }
