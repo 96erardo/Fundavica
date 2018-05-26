@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\QueryFilters\FiltersComment;
+use App\Formatters\Resources;
+use App\Formatters\Resource;
 use Illuminate\Http\Request;
 use App\Models\Comment;
+use App\Formats\Error;
 use JWTAuth;
 use DB;
 
@@ -20,26 +23,32 @@ class CommentController extends Controller
     }
 
     public function get (FiltersComment $filters, $post) {
+		try {
         
-        $comments = Comment::where('publicacion_id', $post)
-            ->where('respuesta_id', null)
-            ->orderBy('created_at', 'asc')
-            ->with([
-				'user' => function($query) {
-					$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-				},
-				'responses' => function($query) {
-					$query->where('estado_id', 2)
-						->with([
-							'user' => function($query) {
-								$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-							}
-						]);
-				}
-			])
-            ->get();
+			$comments = Comment::where('publicacion_id', $post)
+				->where('respuesta_id', null)
+				->orderBy('created_at', 'asc')
+				->with([
+					'user' => function($query) {
+						$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+					},
+					'responses' => function($query) {
+						$query->where('estado_id', 2)
+							->with([
+								'user' => function($query) {
+									$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+								}
+							]);
+					}
+				])
+				->get();
 
-        return $comments;
+			return response()->json(Resources::format($comments, 'App\Models\Comment'), 200);
+
+		} catch (\Exception $e) {
+
+			return response()->json(Error::format($e, '5xx'), 500);
+		}
 	}
 	
 	public function create (Request $request, $post, $response = null) {
@@ -56,51 +65,54 @@ class CommentController extends Controller
 
 			DB::beginTransaction();
 
-			$comentario = new Comment;
-			$comentario->usuario_id = $user->id;
-			$comentario->publicacion_id = $post;
-			$comentario->contenido = $request->contenido;
-			$comentario->respuesta_id = $response;
-			$comentario->show();
-			$comentario->save();
+			$commentary = new Comment;
+			$commentary->usuario_id = $user->id;
+			$commentary->publicacion_id = $post;
+			$commentary->contenido = $request->contenido;
+			$commentary->respuesta_id = $response;
+			$commentary->show();
+			$commentary->save();
 
 			DB::commit();
 
-			return response()->json([
-				'status' => 'success'
-			], 201);
+			return response()->json(Resource::format($commentary, 'App\Models\Comment'), 201);
 			
 		} catch (\Exception $e) {
 			
 			DB::rollback();
             
-            return response()->json([
-				'status' => 'error',
-				'message' => $e->getMessage(),
-            ], 500);
+            return response()->json(Error::format($e, '5xx'), 500);
 		}
     }
 
     public function read ($post, $comment) {
 
-        $comment = Comment::where('publicacion_id', $post)
-            ->where('id', $comment)
-            ->with([
-                'user' => function($query) {
-					$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-				},
-				'responses' => function($query) {
-					$query->where('estado_id', 2)
-						->with([
-							'user' => function($query) {
-								$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-							}
-						]);
-				}
-            ])
-            ->first();
+		try {
 
-        return $comment;
+			$comment = Comment::where('publicacion_id', $post)
+				->where('id', $comment)
+				->with([
+					'user' => function($query) {
+						$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+					},
+					'responses' => function($query) {
+						$query->where('estado_id', 2)
+							->with([
+								'user' => function($query) {
+									$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+								}
+							]);
+					}
+				])
+				->first();
+		
+			return response()->json(Resource::format($comment, 'App\Models\Comment'), 200);
+		
+		} catch (\Exception $e) {
+
+			return response()->json(Error::format($e, '5xx'), 500);
+		}
+
 	}
 	
 	public function update ($post, $comment) {
@@ -118,16 +130,11 @@ class CommentController extends Controller
 
 			DB::commit();
 
-			return response()->json([
-				'status' => 'success',
-			], 200);
+			return response()->json(Resource::format($comment, 'App\Models\Comment'), 200);
 
 		} catch (\Exception $e) {
 
-			return response()->json([
-				'status' => 'error',
-				'message' => $e->getMessage(),
-			], 500);
+			return response()->json(Error::format($e, '5xx'), 500);
 		}
 	}
 
@@ -141,16 +148,11 @@ class CommentController extends Controller
 
 			DB::commit();
 
-			return respone()->json([
-				'status' => 'success',
-			], 200);
+			return response()->json(Resource::format($comment, 'App\Models\Comment'), 200);
 
 		} catch (\Exception $e) {
 
-			return response()->json([
-				'status' => 'error',
-				'message' => $e->getMessage(),
-			], 500);
+			return response()->json(Error::format($e, '5xx'), 500);
 		}
 	}
 }

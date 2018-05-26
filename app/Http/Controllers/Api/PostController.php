@@ -53,10 +53,6 @@ class PostController extends Controller
 
         try {
 
-            if (! $user = JWTAuth::parseToken()->authenticate() ) {
-                return response()->json(['user_not_found'], 404);
-            }
-
             DB::beginTransaction();
 
             $post = new Post;
@@ -76,18 +72,25 @@ class PostController extends Controller
             
             DB::rollback();
             
-            return  response()->json(Error::format($e, '5xx'), 500);
+            return response()->json(Error::format($e, '5xx'), 500);
         }
     }
 
     public function read (FiltersPost $filters, $id) {
+
+        try {
         
         $post = Post::select('id', 'titulo', 'imagen', 'created_at', 'updated_at', 'usuario_id', 'categoria_id', 'estado_id')
             ->where('id', $id)
             ->filterBy($filters)
             ->first();
+        
+            return Resource::format($post, 'App\Models\Post');
 
-        return Resource::format($post, 'App\Models\Post');
+        } catch (\Exception $e) {
+
+            return response()->json(Error::format($e, '5xx'), 500);
+        } 
     }
 
     public function update (Request $request, $id) {
@@ -100,10 +103,6 @@ class PostController extends Controller
         ]);
 
         try {
-
-            if (! $user = JWTAuth::parseToken()->authenticate() ) {
-                return response()->json(['user_not_found'], 404);
-            }
 
             DB::beginTransaction();
 
@@ -137,9 +136,7 @@ class PostController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'status' => 'success'
-            ], 200);
+            return response()->json(Resource::format($post, 'App\Models\Post'), 200);
 
         } catch (\Exception $e) {
 

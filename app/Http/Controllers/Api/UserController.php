@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Api;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
+use App\Formatters\Resources;
 use Illuminate\Http\Request;
+use App\Formatters\Resource;
+use App\Formats\CustomError;
 use App\Mail\ConfirmMail;
+use App\Formats\Error;
 use App\User;
 use JWTAuth;
 use DB;
@@ -52,17 +56,13 @@ class UserController extends Controller
 
             DB::rollback();
             
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->errorInfo[2]
-            ], 500);
+            return response()->json(Error::format($e, '5xx'), 500);
         }
     }
 
     public function read (Request $request) {
-        if (! $user = JWTAuth::parseToken()->authenticate() ) {
-            return response()->json(['user_not_found'], 401);
-        }
+        
+        try {
 
         User::select('id', 'nombre', 'apellido', 'usuario', 'correo', 'role_id')
             ->where('id', $user->id)
@@ -73,6 +73,11 @@ class UserController extends Controller
         return response()->json([
             $user,
         ], 200);
+
+        } catch (\Exception $e) {
+
+            return response()->json(Error::format($e, '5xx'), 500);
+        }
     }
 
     public function update(Request $request){
@@ -131,10 +136,7 @@ class UserController extends Controller
         
         } catch (\Exception $e) {
 
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ], 500);
+            return response()->json(Error::format($e, '5xx'), 500);
         }
     }
 
@@ -161,10 +163,7 @@ class UserController extends Controller
 
         } catch (\Exception $e) {
             
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ], 500);
+           return response()->json(Error::format($e, '5xx'), 500);
         }
     }
 
@@ -185,6 +184,7 @@ class UserController extends Controller
         }
 
         try {
+
             if ( ! $token = JWTAuth::attempt($credentials, ['role' => $user->role_id]) ) {                
                 return response()->json([
                     'usuario' => [
@@ -202,19 +202,13 @@ class UserController extends Controller
                     ], 401);
 
                 } else if ($user->estado == 3) {
-                    return response()->json([
-                        'error' => [
-                            'El usuario ' . $user->usuario . ' se encuentra actualmente bloqueado, contacte con nosotros para solicitar un desbloqueo'
-                        ]
-                    ], 403);
+                    return response()->json(CustomError::format('User is blocked', 403, [], 403), 403);
                 }
             }
+
         } catch (JWTException $e) {
-            return response()->json([
-                'error' => [
-                    'Error al autenticar al usuario, intentelo de nuevo',
-                ]
-            ], 500);
+
+            return response()->json(Error::format($e, '5xx'), 500);
         }
 
         return response()->json([

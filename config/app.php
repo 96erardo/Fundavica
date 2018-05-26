@@ -164,7 +164,6 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Cerbero\QueryFilters\QueryFiltersServiceProvider::class,
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
-
         /*
          * Package Service Providers...
          */
