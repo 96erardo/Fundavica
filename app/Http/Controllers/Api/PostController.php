@@ -6,18 +6,18 @@ use App\Transformers\PostTransformer;
 use App\Http\Controllers\Controller;
 use App\QueryFilters\FiltersPost;
 use App\Formatters\Resources;
-use App\Formatters\Resource;
-use App\Formats\Error;
 use Illuminate\Http\Request;
+use App\Formatters\Resource;
+use App\Formats\CustomError;
+use App\Formats\Error;
 use App\Models\Post;
-use JWTAuth;
-use DB;
+use JWTAuth, Validator, DB;
 
 class PostController extends Controller
 {
     public function __construct () {
 
-        $this->middleware('jwt.auth')->except('get', 'read');
+        $this->middleware('auth:api')->except('get', 'read');
 
         $this->middleware('api.post.create')->only('create');
         $this->middleware('api.post.update')->only('update');
@@ -39,17 +39,24 @@ class PostController extends Controller
 
             return response()->json(Error::format($e, '5xx'), 500);
         }
-
     }
 
     public function create (Request $request) {
 
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'titulo' => 'required|string',
 			'imagen' => 'required|string',
             'contenido' => 'required|string',
-            'categoria' => 'required',
+            'categoria' => 'required|exists:categoria,id',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(CustomError::format('Los campos no se llenaron correctamente', 400, $validator->errors()), 400);
+        }
+
+        if (!$user = JWTAuth::parseToken()->authenticate()) {
+            return response()->json(CustomError::format('User no encontrado', 404), 404);
+        }
 
         try {
 
@@ -94,13 +101,21 @@ class PostController extends Controller
     }
 
     public function update (Request $request, $id) {
-        
-        $this->validate($request, [
+
+        $validator = Validator::make($request->all(), [
             'titulo' => 'required|string',
 			'imagen' => 'required|string',
             'contenido' => 'required|string',
-            'categoria' => 'required',
+            'categoria' => 'required|exists:categoria,id',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(CustomError::format('Los campos no se llenaron correctamente', 400, $validator->errors()), 400);
+        }
+        
+        if (!$user = JWTAuth::parseToken()->authenticate()) {
+            return response()->json(CustomError::format('User no encontrado', 404), 404);
+        }
 
         try {
 
@@ -110,7 +125,6 @@ class PostController extends Controller
             $post->titulo = $request->titulo;
             $post->imagen = $request->imagen;
             $post->contenido = $request->contenido;
-            $post->usuario_id = $user->id;
             $post->categoria_id = $request->categoria;
             $post->save();
 
@@ -128,6 +142,13 @@ class PostController extends Controller
 
     public function delete (Request $request, $id) {
         try {
+
+            $validator = Validator::make($request->all(), [
+                'titulo' => 'required|string',
+                'imagen' => 'required|string',
+                'contenido' => 'required|string',
+                'categoria' => 'required|exists:categoria,id',
+            ]);
 
             DB::beginTransaction();
 

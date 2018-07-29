@@ -26,10 +26,7 @@ class Update
         $comment = Comment::find($request->comment);
             
         if ( $token->get('sub') != $comment->usuario_id ) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized Action'
-            ], 403);
+            return response()->json(CustomError::format('El usuario no está autorizado para realizar esta acción', 403), 403);
         }
 
         return $next($request);

@@ -229,7 +229,7 @@ class UserController extends Controller
 
         try {
 
-            if (!$token = JWTAuth::attempt($credentials, ['role' => $user->role_id])) {                
+            if (!$token = JWTAuth::claims(['role' => $user->role_id])->attempt($credentials)) {                
                 return response()->json(CustomError::format('Los datos enviados no son correctos', 400, [
                 'usuario' => [
                     'Estas credenciales no coinciden con nuestros registros'

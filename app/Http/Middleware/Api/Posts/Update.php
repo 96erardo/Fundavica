@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware\Api\Posts;
 
-use App\Models\Post;
+use App\Formats\CustomError;
 use App\Models\Token;
-use Closure;
-use JWTAuth;
+use Closure, JWTAuth;
+use App\Models\Post;
 
 class Update
 {
@@ -24,12 +24,13 @@ class Update
         
         $token = new Token($token_string);
         $post = Post::find($request->id);
+
+        if ($post == null) {
+            return response()->json(CustomError::format('Publicación no encontrada', 404), 404);
+        }
             
         if ( $token->get('sub') != $post->usuario_id ) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized Action'
-            ], 403);
+            return response()->json(CustomError::format('El usuario no está autorizado para realizar estas acciones', 403), 403);
         }
 
         return $next($request);

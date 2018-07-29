@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware\Api\Posts;
 
+use App\Formats\CustomError;
 use App\Models\Token;
-use Closure;
-use JWTAuth;
+use Closure, JWTAuth;
 
 class Create
 {
@@ -24,10 +24,7 @@ class Create
         $token = new Token($token_string);
 
         if ( $token->get('role') < 3 ) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized Action'
-            ], 403);
+            return response()->json(CustomError::format('El usuario no está autorizado para realizar esta acción', 403), 403);
         }
 
         return $next($request);
