@@ -26,7 +26,7 @@ class Update
         $post = Post::find($request->id);
 
         if ($post == null) {
-            return response()->json(CustomError::format('Publicación no encontrada', 404), 404);
+            return response()->json(CustomError::format('Recurso no encontrado', 404), 404);
         }
             
         if ( $token->get('sub') != $post->usuario_id ) {

@@ -5,24 +5,33 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\QueryFilters\FiltersComment;
 use App\Formatters\Resources;
+use App\Formats\CustomError;
 use App\Formatters\Resource;
 use Illuminate\Http\Request;
 use App\Models\Comment;
 use App\Formats\Error;
-use JWTAuth;
-use DB;
+use JWTAuth, Validator, DB;
 
 class CommentController extends Controller
 {
-    public function construct () {
+    public function __construct () {
 
-		$this->middleware('jwt.auth')->only('create');
+		$this->middleware('auth:api')->except('read', 'get');
 		$this->middleware('api.comment.update')->only('update');
 		$this->middleware('api.comment.delete')->only('delete');
 		
     }
 
-    public function get (FiltersComment $filters, $post) {
+    public function get (FiltersComment $filters, Request $request, $post) {
+
+		$validator = Validator::make($request->all() + ['post' => $post], [
+            'post' => 'exists:publicacion,id',
+		]);
+		
+		if ($validator->fails()) {
+			return response()->json(CustomError::format('La publicación no existe', 404, $validator->errors()), 404);
+		}
+
 		try {
         
 			$comments = Comment::where('publicacion_id', $post)
@@ -30,16 +39,16 @@ class CommentController extends Controller
 				->orderBy('created_at', 'asc')
 				->with([
 					'user' => function($query) {
-						$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+						$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario', 'correo', 'role_id', 'estado_id');
 					},
-					'responses' => function($query) {
-						$query->where('estado_id', 2)
-							->with([
-								'user' => function($query) {
-									$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-								}
-							]);
-					}
+					// 'responses' => function($query) {
+					// 	$query->where('estado_id', 2)
+					// 		->with([
+					// 			'user' => function($query) {
+					// 				$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+					// 			}
+					// 		]);
+					// }
 				])
 				->get();
 
@@ -52,15 +61,19 @@ class CommentController extends Controller
 	}
 	
 	public function create (Request $request, $post, $response = null) {
-
-		$this->validate($request, [
+		$validator = Validator::make($request->all() + ['post' => $post], [
+			'post' => 'required|exists:publicacion,id',
 			'contenido' => 'required'
 		]);
+
+		if ($validator->fails()) {
+			return response()->json(CustomError::format('La información enviada es incorrecta', 400, $validator->errors()), 400);
+		}
 
 		try {
 			
 			if (! $user = JWTAuth::parseToken()->authenticate() ) {
-                return response()->json(['user_not_found'], 404);
+                return response()->json(CustomError::format('User no encontrado', 404), 404);
 			}
 
 			DB::beginTransaction();
@@ -86,6 +99,15 @@ class CommentController extends Controller
     }
 
     public function read ($post, $comment) {
+		$validator = Validator::make($request->all() + ['post' => $post, 'comment' => $comment], [
+			'post' => 'required|exists:publicacion,id',
+			'comment' => 'required|exists:comentario,id',
+			'contenido' => 'required'
+		]);
+
+		if ($validator->fails()) {
+			return response()->json(CustomError::format('La información enviada es incorrecta', 400, $validator->errors()), 400);
+		}
 
 		try {
 
@@ -112,13 +134,18 @@ class CommentController extends Controller
 
 			return response()->json(Error::format($e, '5xx'), 500);
 		}
-
 	}
 	
-	public function update ($post, $comment) {
-		$this->validate($request, [
+	public function update (Request $request, $post, $comment) {		
+		$validator = Validator::make($request->all() + ['post' => $post, 'comment' => $comment], [
+			'post' => 'required|exists:publicacion,id',
+			'comment' => 'required|exists:comentario,id',
 			'comentario' => 'required|string'
 		]);
+
+		if ($validator->fails()) {
+			return response()->json(CustomError::format('La información enviada es incorrecta', 400, $validator->errors()), 400);
+		}
 
 		try {
 
@@ -130,7 +157,7 @@ class CommentController extends Controller
 
 			DB::commit();
 
-			return response()->json(Resource::format($comment, 'App\Models\Comment'), 200);
+			return response()->json(Resource::format($commentary, 'App\Models\Comment'), 200);
 
 		} catch (\Exception $e) {
 
@@ -139,6 +166,15 @@ class CommentController extends Controller
 	}
 
 	public function delete ($post, $comment) {
+		$validator = Validator::make(['post' => $post, 'comment' => $comment], [
+			'post' => 'required|exists:publicacion,id',
+			'comment' => 'required|exists:comentario,id',
+		]);
+
+		if ($validator->fails()) {
+			return response()->json(CustomError::format('La información enviada es incorrecta', 400, $validator->errors()), 400);
+		}
+
 		try {
 
 			DB::beginTransaction();
@@ -148,7 +184,7 @@ class CommentController extends Controller
 
 			DB::commit();
 
-			return response()->json(Resource::format($comment, 'App\Models\Comment'), 200);
+			return response()->json(Resource::format($commentary, 'App\Models\Comment'), 200);
 
 		} catch (\Exception $e) {
 

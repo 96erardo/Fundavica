@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Middleware\Api\Comment;
+namespace App\Http\Middleware\Api\Comments;
 
+use App\Formats\CustomError;
 use App\Models\Comment;
 use App\Models\Token;
 use Closure;

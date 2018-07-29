@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\Api\Comments;
 
+use App\Formats\CustomError;
 use App\Models\Comment;
 use App\Models\Token;
 use Closure;
@@ -26,7 +27,7 @@ class Delete
         $comment = Comment::find($request->comment);
 
         if ($comment == null) {
-            return response()->json(CustomError::format('Comentario no encontrada', 404), 404);
+            return response()->json(CustomError::format('Recurso no encontrado', 404), 404);
         }
 
         if ( $token->get('sub') != $comment->usuario_id ) {
