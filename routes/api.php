@@ -23,3 +23,4 @@ Route::get('/users/{id}', 'Api\UserController@read');
 Route::put('/users/{id}', 'Api\UserController@update');
 Route::delete('/users/{id}', 'Api\UserController@delete');
 Route::post('/users/login', 'Api\UserController@login');
+Route::post('/users/logout', 'Api\UserController@logout');
