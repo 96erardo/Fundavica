@@ -144,3 +144,5 @@ Route::group(['prefix' => 'donations'], function() {
 
     Route::get('delete/{id}', 'DonationController@delete')->middleware('isAdmin');
 });
+
+Route::get('/logout', 'UserController@logout');

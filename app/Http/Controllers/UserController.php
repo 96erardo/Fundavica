@@ -97,4 +97,17 @@ class UserController extends Controller
 
         return view('auth.manage', ['users' => $users]);
     }
+
+    /**
+     * Logs the authenticated user out
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function logout(Request $request) {
+        
+        Auth::logout();
+        
+        return redirect('/');  
+    }
 }
