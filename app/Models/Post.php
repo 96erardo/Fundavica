@@ -9,9 +9,9 @@ class Post extends Model
 {
     use FiltersRecords;
 
-    protected $table = "publicacion";
+    protected $table = 'publicacion';
 
-    protected $primaryKey = "id";
+    protected $primaryKey = 'id';
 
     public static $apiFormat = [
         'data' => [

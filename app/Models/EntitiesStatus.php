@@ -14,7 +14,7 @@ class EntitiesStatus extends Model
             'type' => 'estado',
             'id' => 'id',
             'attributes' => [
-                'nombre_visible' => 'contenido',
+                'nombre' => 'nombre_visible',
             ],
             'relationships' => []
         ],

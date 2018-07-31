@@ -41,11 +41,13 @@ class Resources {
             foreach ($format->include as $relation => $name) {
                 
                 if ($resource->relationLoaded($relation)) {
-                    $record['included'][] = Resource::include($resource->getRelation($relation), $name);
+                    $relationed = $resource->getRelation($relation);
+
+                    $record['included'][] = Resource::include($relationed, $name);
                 }
             }
 
-            $json[] = $record;         
+            $json[] = $record;       
         }
 
         return $json;
