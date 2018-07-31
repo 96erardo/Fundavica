@@ -16,7 +16,7 @@ class CommentController extends Controller
 {
     public function __construct () {
 
-		$this->middleware('auth:api')->except('read', 'get');
+		$this->middleware('auth:api')->except('read', 'get', 'responses');
 		$this->middleware('api.comment.update')->only('update');
 		$this->middleware('api.comment.delete')->only('delete');
 		
@@ -41,14 +41,14 @@ class CommentController extends Controller
 					'user' => function($query) {
 						$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario', 'correo', 'role_id', 'estado_id');
 					},
-					// 'responses' => function($query) {
-					// 	$query->where('estado_id', 2)
-					// 		->with([
-					// 			'user' => function($query) {
-					// 				$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-					// 			}
-					// 		]);
-					// }
+					'responses' => function($query) {
+						$query->where('estado_id', 2)
+							->with([
+								'user' => function($query) {
+									$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+								}
+							]);
+					}
 				])
 				->get();
 
@@ -98,11 +98,10 @@ class CommentController extends Controller
 		}
     }
 
-    public function read ($post, $comment) {
+    public function read (Request $request, $post, $comment) {
 		$validator = Validator::make($request->all() + ['post' => $post, 'comment' => $comment], [
 			'post' => 'required|exists:publicacion,id',
 			'comment' => 'required|exists:comentario,id',
-			'contenido' => 'required'
 		]);
 
 		if ($validator->fails()) {
@@ -117,18 +116,55 @@ class CommentController extends Controller
 					'user' => function($query) {
 						$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
 					},
-					'responses' => function($query) {
-						$query->where('estado_id', 2)
-							->with([
-								'user' => function($query) {
-									$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-								}
-							]);
-					}
+					// 'responses' => function($query) {
+					// 	$query->where('estado_id', 2)
+					// 		->with([
+					// 			'user' => function($query) {
+					// 				$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+					// 			}
+					// 		]);
+					// }
 				])
 				->first();
 		
 			return response()->json(Resource::format($comment, 'App\Models\Comment'), 200);
+		
+		} catch (\Exception $e) {
+
+			return response()->json(Error::format($e, '5xx'), 500);
+		}
+	}
+
+	public function responses (Request $request, $post, $comment) {
+		$validator = Validator::make($request->all() + ['post' => $post, 'comment' => $comment], [
+			'post' => 'required|exists:publicacion,id',
+			'comment' => 'required|exists:comentario,id',
+		]);
+
+		if ($validator->fails()) {
+			return response()->json(CustomError::format('La información enviada es incorrecta', 400, $validator->errors()), 400);
+		}
+
+		try {
+
+			$comment = Comment::where('publicacion_id', $post)
+				->where('respuesta_id', $comment)
+				->with([
+					'user' => function($query) {
+						$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario', 'correo', 'role_id', 'estado_id');
+					},
+					// 'responses' => function($query) {
+					// 	$query->where('estado_id', 2)
+					// 		->with([
+					// 			'user' => function($query) {
+					// 				$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
+					// 			}
+					// 		]);
+					// }
+				])
+				->get();
+		
+			return response()->json(Resources::format($comment, 'App\Models\Comment'), 200);
 		
 		} catch (\Exception $e) {
 
@@ -140,7 +176,7 @@ class CommentController extends Controller
 		$validator = Validator::make($request->all() + ['post' => $post, 'comment' => $comment], [
 			'post' => 'required|exists:publicacion,id',
 			'comment' => 'required|exists:comentario,id',
-			'comentario' => 'required|string'
+			'contenido' => 'required|string'
 		]);
 
 		if ($validator->fails()) {
@@ -152,7 +188,7 @@ class CommentController extends Controller
 			DB::beginTransaction();
 
 			$commentary = Comment::find($comment);
-			$commentary->contenido = $request->comentario;
+			$commentary->contenido = $request->contenido;
 			$commentary->save();
 
 			DB::commit();
