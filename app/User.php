@@ -90,6 +90,11 @@ class User extends Authenticatable implements JWTSubject
             return "Estandar";
     }
     
+    /**
+     * Returns wheter the authenticated user has the normal role or not
+     *
+     * @return boolean
+     */
     public function isNormal() {
         if($this->role_id == 2 || $this->role_id == 1)
             return true;
@@ -97,6 +102,11 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    /**
+     * Returns wheter the authenticated user has the writer role or not
+     *
+     * @return boolean
+     */
     public function isWriter() {
         if($this->role_id == 3)
             return true;
@@ -104,6 +114,11 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    /**
+     * Returns wheter the authenticated user has the admin role or not
+     *
+     * @return boolean
+     */
     public function isAdmin() {
         if($this->role_id == 4)
             return true;
@@ -111,6 +126,11 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    /**
+     * Returns wheter user has an active account or not
+     *
+     * @return boolean
+     */
     public function isActive() {
         if($this->estado == 1)
             return true;
@@ -118,6 +138,11 @@ class User extends Authenticatable implements JWTSubject
         return false;
     }
 
+    /**
+     * Returns wheter this user account was once deleted
+     *
+     * @return boolean
+     */
     public function isDeleted() {
         if($this->deleted_at == null)
             return false;
