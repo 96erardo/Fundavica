@@ -25,8 +25,7 @@ class Comment extends Model
             'relationships' => [
                 'publicacion' => 'publicacion_id',
                 'usuario' => 'usuario_id',
-                'estado' => 'estado_id',
-                'respuesta' => 'respuesta_id',
+                'estado' => 'estado_id'
             ]
         ],
         'include' => [

@@ -41,9 +41,18 @@ class Resources {
             foreach ($format->include as $relation => $name) {
                 
                 if ($resource->relationLoaded($relation)) {
-                    $relationed = $resource->getRelation($relation);
+                    $related = $resource->getRelation($relation);
+                
+                    if (get_class($related) == 'Illuminate\Database\Eloquent\Collection') {
+                        $included = self::include($related, $name);
 
-                    $record['included'][] = Resource::include($relationed, $name);
+                        foreach ($included as $resource) {
+                            $record['included'][] = $resource;
+                        }
+
+                    } else {
+                        $record['included'][] = Resource::include($related, $name);
+                    }
                 }
             }
 
@@ -53,7 +62,7 @@ class Resources {
         return $json;
     }
 
-    public static function include (Model $resource, $namespace) {
+    public static function include (Collection $collection, $namespace) {
         $format = json_decode(json_encode($namespace::$apiFormat), false);
         $record = [];        
         $json = [];
