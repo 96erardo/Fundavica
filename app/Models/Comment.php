@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Cerbero\QueryFilters\FiltersRecords;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Comment;
 
 class Comment extends Model
 {

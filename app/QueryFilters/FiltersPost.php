@@ -16,19 +16,20 @@ class FiltersPost extends QueryFilters
         if( !empty($page) ) {
             
             $posts = Post::count();
-            $pages = ceil( $posts/16 );
+            $page -= 1;
+            $pages = ceil( $posts/10 );
             
             if ($page > $pages || $page < 0) {
                 $offset = 0;
             } else {
-                $offset = $page * 16;
+                $offset = $page * 10;
             }
     
-            $this->query->offset($offset)->limit(16);
+            $this->query->offset($offset)->limit(10);
         
         } else {
             
-            $this->query->limit(16);
+            $this->query->limit(10);
         }        
     }
 
@@ -62,6 +63,13 @@ class FiltersPost extends QueryFilters
 
                 $include['category'] = function ($query) {
                     $query->select('id', 'nombre');
+                };
+            }
+
+            if (in_array('comments', $relatedResources)) {
+                
+                $include['comments'] = function ($query) {
+                    $query->where('respuesta_id', null)->limit(10);
                 };
             }
 
