@@ -14,7 +14,7 @@ return [
    
     'supportsCredentials' => false,
     'allowedOrigins' => [
-        'http://localhost:3000',
+        'http://localhost:3000', '*'
     ],
     'allowedOriginsPatterns' => [],
     'allowedHeaders' => ['*'],

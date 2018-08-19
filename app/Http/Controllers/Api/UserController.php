@@ -212,6 +212,15 @@ class UserController extends Controller
     }
 
     public function login (Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'usuario' => 'required|string',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(CustomError::format('Los campos no se llenaron correctamente', 400, $validator->errors()), 400);
+        }
         
         $credentials = $request->only('usuario', 'password');  
 
