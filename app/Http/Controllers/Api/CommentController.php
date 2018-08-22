@@ -37,19 +37,7 @@ class CommentController extends Controller
 			$comments = Comment::where('publicacion_id', $post)
 				->where('respuesta_id', null)
 				->orderBy('created_at', 'asc')
-				->with([
-					'user' => function($query) {
-						$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario', 'correo', 'role_id', 'estado_id');
-					},
-					'responses' => function($query) {
-						$query->where('estado_id', 2)
-							->with([
-								'user' => function($query) {
-									$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-								}
-							]);
-					}
-				])
+				->filterBy($filters)
 				->get();
 
 			return response()->json(Resources::format($comments, 'App\Models\Comment'), 200);
@@ -98,7 +86,7 @@ class CommentController extends Controller
 		}
     }
 
-    public function read (Request $request, $post, $comment) {
+    public function read (Request $request, FiltersComment $filters, $post, $comment) {
 		$validator = Validator::make($request->all() + ['post' => $post, 'comment' => $comment], [
 			'post' => 'required|exists:publicacion,id',
 			'comment' => 'required|exists:comentario,id',
@@ -112,19 +100,7 @@ class CommentController extends Controller
 
 			$comment = Comment::where('publicacion_id', $post)
 				->where('id', $comment)
-				->with([
-					'user' => function($query) {
-						$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-					},
-					// 'responses' => function($query) {
-					// 	$query->where('estado_id', 2)
-					// 		->with([
-					// 			'user' => function($query) {
-					// 				$query->withTrashed()->select('id', 'nombre', 'apellido', 'usuario');
-					// 			}
-					// 		]);
-					// }
-				])
+				->filterBy($filters)
 				->first();
 		
 			return response()->json(Resource::format($comment, 'App\Models\Comment'), 200);

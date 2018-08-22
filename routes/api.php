@@ -11,9 +11,9 @@ Route::delete('/posts/{id}', 'Api\PostController@delete');
 
 // Comentarios
 Route::get('/posts/{post}/comments', 'Api\CommentController@get');
-Route::post('/posts/{post}/comments/{response?}', 'Api\CommentController@create');
 Route::get('/posts/{post}/comment/{comment}', 'Api\CommentController@read');
 Route::get('/posts/{post}/comments/{comment}', 'Api\CommentController@responses');
+Route::post('/posts/{post}/comments/{response?}', 'Api\CommentController@create');
 Route::put('/posts/{post}/comments/{comment}', 'Api\CommentController@update');
 Route::delete('/posts/{post}/comments/{comment}', 'Api\CommentController@delete');
 

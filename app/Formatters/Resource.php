@@ -3,6 +3,7 @@
 namespace App\Formatters;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Formatters\Resources;
 
 class Resource {
 
@@ -33,10 +34,21 @@ class Resource {
             $record['data']['relationships'][$key]['id'] = $resource->$field;
         }
 
-        foreach ($format->include as $relation => $name) {
-                
+        foreach ($format->include as $relation => $name) {                            
+            
             if ($resource->relationLoaded($relation)) {
-                $record['included'][] = Resource::include($resource->getRelation($relation), $name);
+                $related = $resource->getRelation($relation);
+                
+                if (get_class($related) == 'Illuminate\Database\Eloquent\Collection') {
+                    $included = Resources::include($related, $name);
+
+                    foreach ($included as $resource) {
+                        $record['included'][] = $resource;
+                    }
+
+                } else {
+                    $record['included'][] = self::include($related, $name);
+                }
             }
         }      
 

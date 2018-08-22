@@ -24,14 +24,19 @@ class PostController extends Controller
         $this->middleware('api.post.delete')->only('delete');
     }    
 
-    public function get (FiltersPost $filters) {
+    public function get (Request $request, FiltersPost $filters) {
         
         try {            
             
-            $posts = Post::select('id', 'titulo', 'imagen', 'created_at', 'updated_at', 'usuario_id', 'categoria_id', 'estado_id')
+            $query = Post::select('id', 'titulo', 'imagen', 'created_at', 'updated_at', 'usuario_id', 'categoria_id', 'estado_id')
                 ->orderBy('created_at', 'desc')
-                ->filterBy($filters)
-                ->get();
+                ->filterBy($filters);
+
+            if (!$request->has('page')) {
+                $query->offset($this->offset(0, 16))->limit(10);
+            }
+
+            $posts = $query->get();
 
             return Resources::format($posts, 'App\Models\Post');
             
@@ -165,5 +170,19 @@ class PostController extends Controller
             
             return  response()->json(Error::format($e, '5xx'), 500);
         }
+    }
+
+    private function offset ($page, $elements) {
+        
+        $posts = Post::count();
+        $pages = ceil( $posts/$elements );
+            
+        if ($page > $pages || $page < 0) {
+            $offset = 0;
+        } else {
+            $offset = $page * $elements;
+        }
+    
+        return $offset;
     }
 }

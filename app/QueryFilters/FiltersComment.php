@@ -16,8 +16,7 @@ class FiltersComment extends QueryFilters
             if (in_array('user', $relatedResources)) {
                 
                 $include['user'] = function ($query) {
-                    $query->select('id', 'nombre', 'usuario', 'role_id', 'estado_id')
-                        ->with(['role', 'status']);
+                    $query->select('id', 'nombre', 'apellido', 'correo', 'usuario', 'role_id', 'estado_id');
                 };
             }
 
@@ -33,6 +32,11 @@ class FiltersComment extends QueryFilters
                 $include['category'] = function ($query) {
                     $query->select('id', 'nombre');
                 };
+            }
+
+            if (in_array('responses', $relatedResources)) {
+                
+                $include[] = 'responses';
             }
 
             $this->query->with($include);

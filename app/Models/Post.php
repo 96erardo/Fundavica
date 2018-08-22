@@ -32,6 +32,7 @@ class Post extends Model
             'user' => 'App\User',
             'category' => 'App\Models\Category',
             'status' => 'App\Models\EntitiesStatus',
+            'comments' => 'App\Models\Comment',
         ],
     ];
 

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Cerbero\QueryFilters\FiltersRecords;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Comment;
 
 class Comment extends Model
 {
@@ -25,8 +24,7 @@ class Comment extends Model
             'relationships' => [
                 'publicacion' => 'publicacion_id',
                 'usuario' => 'usuario_id',
-                'estado' => 'estado_id',
-                'respuesta' => 'respuesta_id',
+                'estado' => 'estado_id'
             ]
         ],
         'include' => [
