@@ -162,13 +162,13 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Cerbero\QueryFilters\QueryFiltersServiceProvider::class,
-        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         /*
-         * Package Service Providers...
-         */
+        * Package Service Providers...
+        */
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
-
+        Cerbero\QueryFilters\QueryFiltersServiceProvider::class,
+        Barryvdh\Cors\ServiceProvider::class,
         /*
          * Application Service Providers...
          */
